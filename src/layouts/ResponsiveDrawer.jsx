@@ -62,11 +62,11 @@ function ResponsiveDrawer(props) {
 
   const menuItems = [
     { id: 1, key: 'dashboard', icon: <HomeIcon />, to: '/dashboard' },
-    { id: 2, key: 'courses', icon: <ImportContactsIcon />, to: '/courses' },
-    { id: 3, key: 'grades', icon: <AlignVerticalBottomIcon />, to: '/grades' },
-    { id: 4, key: 'attendance', icon: <CalendarTodayIcon />, to: '/attendance' },
-    { id: 5, key: 'Student Services', icon: <CalendarTodayIcon />, to: '/StudentServices' },
-    { id: 6, key: 'profile', icon: <AccountCircleIcon />, to: '/profile' },
+        { id: 2, key: 'profile', icon: <AccountCircleIcon />, to: '/profile' },
+    { id: 3, key: 'courses', icon: <ImportContactsIcon />, to: '/courses' },
+    { id: 4, key: 'grades', icon: <AlignVerticalBottomIcon />, to: '/grades' },
+    { id: 5, key: 'attendance', icon: <CalendarTodayIcon />, to: '/attendance' },
+    { id: 6, key: 'Student Services', icon: <CalendarTodayIcon />, to: '/StudentServices' },
     { id: 7, key: 'settings', icon: <SettingsIcon />, to: '/settings' },
   ];
 

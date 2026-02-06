@@ -50,26 +50,7 @@ export default function ContactInfoCard({ isRTL }) {
           {t("contact_information")}
         </Typography>
 
-        <Button
-          size="small"
-          variant="outlined"
-          sx={{
-            fontWeight: 500,
-            fontSize: 13,
-            py: 0.2,
-            px: 1.4,
-            color: colors?.textSecondary || "#64748B",
-            borderColor: "#e2e8f0",
-            background: "#fafbfd",
-            borderRadius: 2,
-            textTransform: "none",
-            boxShadow: "none",
-            minWidth: 0,
-            "&:hover": { borderColor: "#b6c1d4", background: "#f6faff" },
-          }}
-        >
-          {t("request_edit")}
-        </Button>
+       
       </Box>
 
       <Divider sx={{ mb: { xs: 2, sm: 3 }, bgcolor: colors?.border, height: 1 }} />

@@ -11,11 +11,9 @@ export default function DashboardSplitPage() {
       sx={{
         mt: 3,
         display: 'grid',
-        // عمود واحد لحد lg (>=1200px يخليها عمودين)
         gridTemplateColumns: { xs: '1fr', sm: '1fr', md: '1fr', lg: '1fr 1fr' },
         gap: 2,
         alignItems: 'start',
-        // عشان أي طفل ما يضغطش الشبكة (خصوصاً الكاليندر)
         '& > *': { minWidth: 0 },
       }}
     >

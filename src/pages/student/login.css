@@ -122,21 +122,20 @@ box-shadow: 0 0 50px 1px rgba(0, 0, 0, 0.3);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
 }
 
-.logo_left {
-  position: relative;
-  left: 20px;
-  width: 200px;
-  height: 200px;
-  object-fit: contain;
+.logo_left
+ {
+  margin-left: 12.5px;
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
-  padding: 10px;
-}
+
+ }
 
 .left_text {
   font-size: 2rem;
-  font-weight: normal;
   margin-top: 2rem;
-  
+    font-weight: 400;
+
   text-align: center;
   line-height: 1.4;
   direction: rtl;
@@ -451,16 +450,7 @@ form input:focus {
   .right_side {
     padding: 2rem 1.5rem;
   }
-  .logo_left {
-  position: relative;
-  left: 20px;
-  width: 150px;
-  height: 150px;
-  object-fit: contain;
-  border-radius: 50%;
-  padding: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
+
 
   .title {
     font-size: 1.5rem;
@@ -696,5 +686,22 @@ background: var(--box_background_color);
   }
   .footer{
     display: none;
+  }
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #receipt-print,
+  #receipt-print * {
+    visibility: visible !important;
+  }
+
+  #receipt-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }

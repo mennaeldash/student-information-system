@@ -1,20 +1,14 @@
 // src/components/CO_components/RegistrationFlow.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Paper,
-  ButtonBase,
-  Typography,
-  useTheme,
-  Button,
-} from "@mui/material";
+import { Box, Paper, ButtonBase, Typography, useTheme } from "@mui/material";
 import MenuBookOutlined from "@mui/icons-material/MenuBookOutlined";
 import GridViewOutlined from "@mui/icons-material/GridViewOutlined";
 import PaymentOutlined from "@mui/icons-material/PaymentOutlined";
 import CheckCircleRounded from "@mui/icons-material/CheckCircleRounded";
 
 import { useThemeContext } from "../../services/theme_context.jsx";
-import { fetchCourses } from "../../services/course_service.js";
+import { fetchCourses } from "../../hooks/course_service.js";
+import { submitRegistration } from "../../hooks/registration_service.jsx"; // عندك .jsx — سيبيه زي ما هو
 
 import CourseSearchPanel from "./CourseSearchPanel";
 import CourseCard from "./CourseCard";
@@ -24,30 +18,28 @@ import RegistrationDeadline, { fetchRegistrationMeta } from "./RegistrationDeadl
 
 import { useTranslation } from "react-i18next";
 import PaymentFlow from "./payment/PaymentFlow";
-
-// 👇 جديد: استيراد واجهة السكاشن من الكود التاني
 import SectionManagement from "./SectionManagement";
 
-// مقاسات
 const SUMMARY_W = 350;
 const GAP = 20;
 const STEP_H = 50;
 
+const LS_KEY = "registeredCourses_v1";
+
 const STEPS = [
   { key: "register", label: "academic_registration", icon: <MenuBookOutlined fontSize="small" /> },
-  { key: "sections", label: "section_management",    icon: <GridViewOutlined  fontSize="small" /> },
-  { key: "payment",  label: "epayment",              icon: <PaymentOutlined  fontSize="small" /> },
+  { key: "sections", label: "section_management", icon: <GridViewOutlined fontSize="small" /> },
+  { key: "payment", label: "epayment", icon: <PaymentOutlined fontSize="small" /> },
 ];
 
-/* ---------------------- Step pill ---------------------- */
 function StepCard({ label, icon, status, onClick, dir = "ltr" }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isActive = status === "active";
-  const isDone   = status === "done";
-  const isLocked = status === "locked";
+  const isDone = status === "done";
+  const isLocked = false;
 
-  const darkFill    = theme.palette.mode === "dark" ? theme.palette.grey[800] : theme.palette.grey[900];
+  const darkFill = theme.palette.mode === "dark" ? theme.palette.grey[800] : theme.palette.grey[900];
   const lightIconBg = theme.palette.mode === "dark" ? theme.palette.grey[700] : theme.palette.grey[100];
 
   return (
@@ -101,12 +93,7 @@ function StepCard({ label, icon, status, onClick, dir = "ltr" }) {
 
         {isDone && (
           <CheckCircleRounded
-            sx={{
-              fontSize: 18,
-              ml: 0.5,
-              color: isActive ? "common.white" : "success.main",
-              opacity: 0.9,
-            }}
+            sx={{ fontSize: 18, ml: 0.5, color: isActive ? "common.white" : "success.main", opacity: 0.9 }}
           />
         )}
       </Box>
@@ -114,11 +101,11 @@ function StepCard({ label, icon, status, onClick, dir = "ltr" }) {
   );
 }
 
-function StepsHeader({ step, setStep, dir = "ltr" }) {
+function StepsHeader({ step, setStep, completedSteps, dir = "ltr" }) {
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 1, width: "100%" }}>
       {STEPS.map((s, i) => {
-        const status = i < step ? "done" : i === step ? "active" : "locked";
+        const status = i === step ? "active" : completedSteps.has(i) ? "done" : "idle";
         return (
           <StepCard
             key={s.key}
@@ -126,7 +113,7 @@ function StepsHeader({ step, setStep, dir = "ltr" }) {
             icon={s.icon}
             status={status}
             dir={dir}
-            onClick={() => { if (i <= step) setStep(i); }}
+            onClick={() => setStep(i)}
           />
         );
       })}
@@ -134,37 +121,65 @@ function StepsHeader({ step, setStep, dir = "ltr" }) {
   );
 }
 
-/* ---------------------- Main flow ---------------------- */
 export default function RegistrationFlow() {
   const { t, i18n } = useTranslation();
   const { colors } = useThemeContext();
 
-  const [step, setStep] = useState(0);
+  const studentId = "2200914"; // مؤقت
+  const academicTermId = "T2025F"; // مؤقت
 
-  // البيانات
+  const [step, setStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState(() => new Set());
+
   const [allCourses, setAllCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // البحث + السيمستر
-  const [filters, setFilters] = useState({ query: "", semester: "all" });
-
-  // التاب (All / Required / Elective / Recommended)
+  const [filters, setFilters] = useState({ query: "", level: "all" });
   const [tab, setTab] = useState("all");
 
-  // الملخص المختار
   const [selected, setSelected] = useState([]);
 
-  // الميتاداتا
   const [deadlineISO, setDeadlineISO] = useState(null);
   const [deadlineNote, setDeadlineNote] = useState("");
 
-  // جلب الكورسات + الميتا
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  // ✅ Load saved selected from localStorage
+  const loadSavedSelected = () => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      const arr = JSON.parse(raw || "[]");
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  };
+
+  // ✅ Save selected to localStorage
+  const saveSelected = (arr) => {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(arr || []));
+    } catch {}
+  };
+
   useEffect(() => {
     (async () => {
       setLoading(true);
+
       const data = await fetchCourses();
-      setAllCourses(data);
-      setSelected(data.filter((c) => c.status === "registered"));
+
+      // ✅ restore saved courses after refresh
+      const saved = loadSavedSelected();
+      setSelected(saved);
+
+      // ✅ merge statuses into API list (so chip/button shows Registered)
+      const merged = data.map((c) => {
+        const isSaved = saved.some((s) => s.id === c.id);
+        return isSaved ? { ...c, status: "registered" } : c;
+      });
+
+      setAllCourses(merged);
       setLoading(false);
     })();
 
@@ -175,25 +190,75 @@ export default function RegistrationFlow() {
     })();
   }, []);
 
-  // فلترة حسب البحث + السيمستر + التاب
   const filtered = useMemo(() => {
     const q = (filters.query || "").trim().toLowerCase();
+
     return allCourses.filter((c) => {
-      const inSem = filters.semester === "all" || c.semester === filters.semester;
+      const inLevel = filters.level === "all" || String(c.level) === String(filters.level);
       const inTab = tab === "all" ? true : (c.type || "").toLowerCase() === tab;
+
       const hay = `${c.code} ${c.name} ${c.instructor}`.toLowerCase();
       const inText = !q || hay.includes(q);
-      return inSem && inTab && inText;
+
+      return inLevel && inTab && inText;
     });
   }, [allCourses, filters, tab]);
 
-  // أفعال الملخص
+  // ✅ Register locally + persist
   const handleRegister = (course) => {
     if (selected.some((s) => s.id === course.id)) return;
-    setSelected((s) => [...s, { ...course, status: "registered" }]);
+
+    const nextSelected = [...selected, { ...course, status: "registered" }];
+    setSelected(nextSelected);
+    saveSelected(nextSelected);
+
+    // update UI list so chips show registered
+    setAllCourses((prev) => prev.map((c) => (c.id === course.id ? { ...c, status: "registered" } : c)));
   };
-  const handleRemove = (id) => setSelected((s) => s.filter((c) => c.id !== id));
-  const handleSubmit = () => setStep(1); // انتقال للـ Section Management
+
+  // ✅ Remove locally + persist
+  const handleRemove = (id) => {
+    const nextSelected = selected.filter((c) => c.id !== id);
+    setSelected(nextSelected);
+    saveSelected(nextSelected);
+
+    // رجّعه available مؤقتًا
+    setAllCourses((prev) => prev.map((c) => (c.id === id ? { ...c, status: "available" } : c)));
+  };
+
+  // ✅ Submit (هيفضل زي ما عندك — حتى لو الباك واقع)
+  const handleSubmit = async () => {
+    try {
+      setSubmitError("");
+      setSubmitLoading(true);
+
+      const payload = {
+        id: crypto.randomUUID(),
+        studentId: String(studentId),
+        academicTermId: String(academicTermId),
+        courses: selected.map((c, idx) => ({
+          id: idx + 1,
+          courseOfferingId: String(c.id),
+        })),
+      };
+
+      const result = await submitRegistration(payload);
+      console.log("Registration POST result =>", result);
+
+      setCompletedSteps((prev) => new Set(prev).add(0));
+      setStep(1);
+    } catch (e) {
+      console.error("submitRegistration error =>", e);
+      const msg =
+        e?.response?.data?.message ||
+        e?.response?.data?.title ||
+        e?.message ||
+        "Failed to submit registration";
+      setSubmitError(msg);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   return (
     <Box
@@ -207,20 +272,18 @@ export default function RegistrationFlow() {
         color: colors?.text,
       }}
     >
-      {/* عنوان رئيسي */}
       <Typography variant="h4" sx={{ fontWeight: 500, mb: 2 }}>
         {t("academic_registration")}
       </Typography>
+
       <Typography sx={{ color: "text.secondary", mb: 3 }}>
         {t("Register for courses for the upcoming semester according to your academic plan.")}
       </Typography>
 
-      {/* Steps */}
-      <StepsHeader step={step} setStep={setStep} dir={i18n.dir()} />
+      <StepsHeader step={step} setStep={setStep} completedSteps={completedSteps} dir={i18n.dir()} />
 
       {step === 0 && (
         <>
-          {/* البحث */}
           <CourseSearchPanel
             courses={allCourses}
             value={filters}
@@ -229,42 +292,31 @@ export default function RegistrationFlow() {
             width={{ xs: "100%", lg: "67%" }}
           />
 
-          {/* يسار: قائمة الكورسات — يمين: الملخص */}
           <Box
             sx={{
               mt: 3,
               display: "grid",
               gap: { xs: 3, lg: 5 },
-              gridTemplateColumns: {
-                xs: "1fr",
-                lg: `minmax(0, 1fr) ${SUMMARY_W}px`,
-              },
+              gridTemplateColumns: { xs: "1fr", lg: `minmax(0, 1fr) ${SUMMARY_W}px` },
               alignItems: "start",
             }}
           >
-            {/* Left column */}
             <Box sx={{ flex: "1 1 0%", minWidth: 0, width: "100%" }}>
-             <Typography
-    variant="h6"
-    component="div"                 // ← مهم علشان ما يكونش <p> جواه عناصر بلوك
-    sx={{
-      fontWeight: 400,
-      mb: 1.5,
-      display: "flex",
-      alignItems: "center",
-      flexWrap: "wrap", 
-      justifyContent:"space-between"
-                 // لو الشاشة ضاقت ينزل سطر تاني
-    }}
-  >
-    {t("available_courses")}
-    <RegistrationDeadline
-      deadlineISO={deadlineISO}
-      note={deadlineNote}
-      sx={{ mt: 0, fontSize: 12 }} // ← إلغاء المارجن وقلّة بسيطة في الحجم
-    />
-  </Typography>
-
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{
+                  fontWeight: 400,
+                  mb: 1.5,
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  justifyContent: "space-between",
+                }}
+              >
+                {t("available_courses")}
+                <RegistrationDeadline deadlineISO={deadlineISO} note={deadlineNote} sx={{ mt: 0, fontSize: 12 }} />
+              </Typography>
 
               <Box
                 sx={{
@@ -302,28 +354,31 @@ export default function RegistrationFlow() {
               </Box>
             </Box>
 
-            {/* Right column: الملخص */}
             <Box sx={{ width: "100%", minWidth: 0 }}>
               <RegistrationSummary
                 selected={selected}
                 onRemove={handleRemove}
                 maxCredits={18}
                 onSubmit={handleSubmit}
+                submitting={submitLoading}
+                submitError={submitError}
               />
             </Box>
           </Box>
         </>
       )}
 
-      {/* ✅ Step 1: Section Management (من الكود التاني) */}
-     {step === 1 && (
-  <Box sx={{ mt: GAP / 2 }}>
-    <SectionManagement onNext={() => setStep(2)} /> {/* 👈 هنا السحر */}
-  </Box>
-)}
+      {step === 1 && (
+        <Box sx={{ mt: GAP / 2 }}>
+          <SectionManagement
+            onNext={() => {
+              setCompletedSteps((prev) => new Set(prev).add(1));
+              setStep(2);
+            }}
+          />
+        </Box>
+      )}
 
-
-      {/* Step 2: Payment */}
       {step === 2 && (
         <Box sx={{ mt: 2 }}>
           <PaymentFlow />

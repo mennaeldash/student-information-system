@@ -13,11 +13,13 @@ export default function PaymentSummary({ data = {} }) {
   const admin = Number(data.admin ?? 0);
   const knowledge = Number(data.knowledge ?? 0);
   const technology = Number(data.technology ?? 0);
+
   const total =
-    data.total != null
-      ? Number(data.total)
-      : tuition + admin + knowledge + technology;
+    data.total != null ? Number(data.total) : tuition + admin + knowledge + technology;
+
+  // status: paid | pending_payment
   const status = data.status ?? "pending_payment";
+  const isPaid = status === "paid";
 
   return (
     <Paper
@@ -40,62 +42,60 @@ export default function PaymentSummary({ data = {} }) {
 
       {/* السطور */}
       <Box sx={{ display: "grid", gap: 1, fontSize: 14 }}>
-       <Row
-  label={t("payment.tuition_fee", "Tuition Fee")}
-  value={`£ ${tuition.toFixed(2)}`}
-  labelSx={{ fontSize: 14,  color: colors.text }}
-  valueSx={{ fontSize: 14 }}
-/>
+        <Row
+          label={t("payment.tuition_fee", "Tuition Fee")}
+          value={`EGP ${tuition.toFixed(2)}`}
+          labelSx={{ fontSize: 14, color: colors?.text }}
+          valueSx={{ fontSize: 14 }}
+        />
 
         <Row
           label={t("payment.admin_fee", "Administrative fees")}
-          value={`£ ${admin.toFixed(2)}`}
-          labelSx={{ fontSize: 14,  color: colors.text }}
-  valueSx={{ fontSize: 14 }}
+          value={`EGP ${admin.toFixed(2)}`}
+          labelSx={{ fontSize: 14, color: colors?.text }}
+          valueSx={{ fontSize: 14 }}
         />
+
         <Row
           label={t("payment.knowledge_fee", "Knowledge Bank fees")}
-          value={`£ ${knowledge.toFixed(2)}`}
-          labelSx={{ fontSize: 14,  color: colors.text }}
-  valueSx={{ fontSize: 14 }}
+          value={`EGP ${knowledge.toFixed(2)}`}
+          labelSx={{ fontSize: 14, color: colors?.text }}
+          valueSx={{ fontSize: 14 }}
         />
+
         <Row
           label={t("payment.tech_fee", "Technology Fee")}
-          value={`£ ${technology.toFixed(2)}`}
-          labelSx={{ fontSize: 14,
-             color: colors.text  }}
-  valueSx={{ fontSize: 14 }}
+          value={`EGP ${technology.toFixed(2)}`}
+          labelSx={{ fontSize: 14, color: colors?.text }}
+          valueSx={{ fontSize: 14 }}
         />
 
         <Divider sx={{ my: 1 }} />
 
         <Row
           label={t("payment.total", "Total")}
-          value={`£ ${total.toFixed(2)}`}
-          valueSx={{ fontWeight: 300 }}   // إجمالي أجرأ شوية
-          labelSx={{ fontWeight: 700 }}
+          value={`EGP ${total.toFixed(2)}`}
+          valueSx={{ fontWeight: 300 }}
+          labelSx={{ fontWeight: 700, color: colors?.text }}
         />
 
         {/* حالة الدفع */}
-        <Box sx={{ mt: .2 }}>
+        <Box sx={{ mt: 0.2 }}>
           <Typography variant="caption" sx={{ color: "text.secondary" }}>
             {t("payment.status", "Payment Status")}
           </Typography>
-          
-        
         </Box>
-  <Chip
-            label={t(`payment.${status}`, "Pending Payment")}
-            
-            sx={{
-              mt: 0.5,
-              bgcolor: "#fff2c8ff",
-              color: "#d99e5aff",
-              fontWeight: 700,
 
-              "& .MuiChip-label": { px: 0.5, fontSize: 12 },
-            }}
-          />
+        <Chip
+          label={t(`payment.${status}`, isPaid ? "Paid" : "Pending Payment")}
+          sx={{
+            mt: 0.5,
+            bgcolor: isPaid ? "#E8FAF1" : "#fff2c8ff",
+            color: isPaid ? "#10B981" : "#d99e5aff",
+            fontWeight: 700,
+            "& .MuiChip-label": { px: 0.5, fontSize: 12 },
+          }}
+        />
       </Box>
     </Paper>
   );

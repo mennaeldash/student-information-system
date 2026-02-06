@@ -48,7 +48,7 @@ const SectionsHeader = ({ onViewChange }) => {
         }}>
           <AccessTime sx={{ fontSize: "20px" }} />
           <Typography variant="body2" sx={{ fontSize: { xs: "0.875rem", sm: "0.9rem" } }}>
-            {t("Registration Deadline: October 15, 2023")}
+            {t("Registration Deadline: October 15, 2026")}
           </Typography>
         </Box>
       </Box>

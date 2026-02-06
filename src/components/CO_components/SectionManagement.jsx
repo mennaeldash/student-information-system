@@ -22,7 +22,6 @@ const fetchCourses = async (t) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     return [
       { id: "CS101", code: "CS101", name: "Introduction to Programming", type: "Lecture", credits: 3, level: 1, sections: 3 },
-      { id: "ENG303", code: "ENG303", name: "Advanced Composition", type: "Seminar", credits: 3, level: 3, sections: 2 },
     ];
   } catch (error) {
     console.error(t("Error fetching courses:"), error);

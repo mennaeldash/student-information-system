@@ -4,7 +4,7 @@ import { Tabs, Tab, Box, useTheme } from "@mui/material";
 import { useThemeContext } from "../../services/theme_context.jsx";
 import { useTranslation } from "react-i18next";
 
-const KEYS = ["all", "required", "elective", "recommended"];
+const KEYS = ["all", "required", "recommended"];
 
 export default function CategoryTabs({ value = "all", onChange = () => {} }) {
   const theme = useTheme();
@@ -13,7 +13,7 @@ export default function CategoryTabs({ value = "all", onChange = () => {} }) {
 
   return (
     <Box
-      dir={i18n.dir()}                 // ✅ يحترم RTL/LTR
+      dir={i18n.dir()}              
       sx={{
         mt: 2,
         width: "100%",

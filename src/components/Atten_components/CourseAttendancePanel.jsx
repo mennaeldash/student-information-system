@@ -8,6 +8,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, detailedRecords }) => {
   const { colors } = useThemeContext();
@@ -15,23 +17,22 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
   const theme = useTheme();
   
   // Responsive breakpoints
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // < 600px
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md')); // 600px - 900px
-  const isLaptop = useMediaQuery(theme.breakpoints.between('md', 'lg')); // 900px - 1200px
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg')); // > 1200px
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTinyTablet = useMediaQuery('(min-width:600px) and (max-width:660px)');
+  const isSmallTablet = useMediaQuery('(min-width:661px) and (max-width:799px)');
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isLaptop = useMediaQuery(theme.breakpoints.between('md', 'lg'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
   
-  const courseData = detailedRecords.find(record => record.id.toString() === selectedCourse) || detailedRecords[0];
   const [selectExpanded, setSelectExpanded] = useState(false);
 
-  // متغير للتحكم في تشغيل API (متوقف الآن)
   const ENABLE_EXTERNAL_API = false;
-
-  // States للـ API الخارجي (بس مش هيتستخدموا دلوقتي)
   const [externalApiData, setExternalApiData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [sessionsData, setSessionsData] = useState([
+  // Default sessions data (fallback)
+  const defaultSessionsData = [
     { date: 'Oct 15, 2023', status: 'Present' },
     { date: 'Oct 13, 2023', status: 'Present' },
     { date: 'Oct 6, 2023', status: 'Present' },
@@ -40,9 +41,33 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
     { date: 'Sep 15, 2023', status: 'Present' },
     { date: 'Sep 8, 2023', status: 'Present' },
     { date: 'Sep 1, 2023', status: 'Present' },
-  ]);
+  ];
 
-  // useEffect للـ API الخارجي (معطل حالياً)
+  const [sessionsData, setSessionsData] = useState(defaultSessionsData);
+
+  // Get current course data
+  const courseData = detailedRecords.find(record => record.id.toString() === selectedCourse) || detailedRecords[0];
+
+  // ========== الحل: تحديث جدول الحضور عند تغيير الكورس ==========
+  useEffect(() => {
+    // البحث عن الكورس المختار
+    const currentCourse = detailedRecords.find(
+      record => record.id.toString() === selectedCourse
+    );
+
+    if (currentCourse) {
+      // لو الكورس عنده sessions data، استخدمها
+      if (currentCourse.sessions && Array.isArray(currentCourse.sessions)) {
+        setSessionsData(currentCourse.sessions);
+      } else {
+        // لو مفيش sessions، استخدم البيانات الافتراضية
+        setSessionsData(defaultSessionsData);
+      }
+    }
+  }, [selectedCourse, detailedRecords]);
+  // ============================================================
+
+  // External API call (if enabled)
   useEffect(() => {
     if (!ENABLE_EXTERNAL_API || !selectedCourse) return;
 
@@ -68,7 +93,8 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         const data = await response.json();
         setExternalApiData(data);
 
-        if (data.sessions) {
+        // تحديث sessions من الـ API
+        if (data.sessions && Array.isArray(data.sessions)) {
           setSessionsData(data.sessions);
         }
       } catch (error) {
@@ -82,7 +108,6 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
     fetchExternalApiData();
   }, [selectedCourse, ENABLE_EXTERNAL_API]);
 
-  // useEffect لحفظ تفضيلات الثيم 
   useEffect(() => {
     if (colors?.mode) {
       localStorage.setItem('attendance-theme-preference', colors.mode);
@@ -99,16 +124,66 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         selectMaxWidth: '100%',
         mainFlexDirection: 'column',
         mainGap: '30px',
-        circleSize: 160,
         circleMarginTop: 0,
-        circleMinWidth: '100%',
+        circleWidth: '100%',
+        circlePaddingLeft: 0,
         rightSectionMarginLeft: 0,
         titleFontSize: 24,
         statsFlexDirection: 'column',
         statsGap: '20px',
         tableFontSize: 16,
+        tablePadding: 8,
         padding: 16,
-        marginBottom: 60
+        marginBottom: 60,
+        panelHeight: 'auto',
+        dateWidth: '30%',
+        statusWidth: '70%'
+      };
+    } else if (isTinyTablet) {
+      return {
+        headerFlexDirection: 'column',
+        headerGap: '16px',
+        selectMinWidth: '100%',
+        selectMaxWidth: '100%',
+        mainFlexDirection: 'column',
+        mainGap: '30px',
+        circleMarginTop: 0,
+        circleWidth: '100%',
+        circlePaddingLeft: 0,
+        rightSectionMarginLeft: 0,
+        titleFontSize: 24,
+        statsFlexDirection: 'column',
+        statsGap: '20px',
+        tableFontSize: 16,
+        tablePadding: 9,
+        padding: 17,
+        marginBottom: 62,
+        panelHeight: 'auto',
+        dateWidth: '30%',
+        statusWidth: '70%'
+      };
+    } else if (isSmallTablet) {
+      return {
+        headerFlexDirection: 'column',
+        headerGap: '18px',
+        selectMinWidth: '100%',
+        selectMaxWidth: '100%',
+        mainFlexDirection: 'column',
+        mainGap: '35px',
+        circleMarginTop: 0,
+        circleWidth: '100%',
+        circlePaddingLeft: 0,
+        rightSectionMarginLeft: 0,
+        titleFontSize: 25,
+        statsFlexDirection: 'row',
+        statsGap: 'clamp(30px, 8vw, 60px)',
+        tableFontSize: 17,
+        tablePadding: 10,
+        padding: 18,
+        marginBottom: 65,
+        panelHeight: 'auto',
+        dateWidth: '30%',
+        statusWidth: '70%'
       };
     } else if (isTablet) {
       return {
@@ -118,16 +193,20 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         selectMaxWidth: '100%',
         mainFlexDirection: 'column',
         mainGap: '40px',
-        circleSize: 180,
         circleMarginTop: 0,
-        circleMinWidth: '100%',
+        circleWidth: '100%',
+        circlePaddingLeft: 0,
         rightSectionMarginLeft: 0,
         titleFontSize: 26,
         statsFlexDirection: 'row',
-        statsGap: '25px',
+        statsGap: '15%',
         tableFontSize: 18,
+        tablePadding: 12,
         padding: 20,
-        marginBottom: 70
+        marginBottom: 70,
+        panelHeight: 'auto',
+        dateWidth: '30%',
+        statusWidth: '70%'
       };
     } else if (isLaptop) {
       return {
@@ -136,17 +215,21 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         selectMinWidth: 280,
         selectMaxWidth: 300,
         mainFlexDirection: 'row',
-        mainGap: '40px',
-        circleSize: 180,
+        mainGap: '18px',
         circleMarginTop: 100,
-        circleMinWidth: 280,
-        rightSectionMarginLeft: 60,
-        titleFontSize: 26,
+        circleWidth: '31.34%',
+        circlePaddingLeft: 20,
+        rightSectionMarginLeft: 28,
+        titleFontSize: 20,
         statsFlexDirection: 'row',
-        statsGap: '25px',
-        tableFontSize: 18,
-        padding: 22,
-        marginBottom: 80
+        statsGap: '25%',
+        tableFontSize: 13,
+        tablePadding: 6,
+        padding: 14,
+        marginBottom: 50,
+        panelHeight: 'auto',
+        dateWidth: '30%',
+        statusWidth: '70%'
       };
     } else {
       return {
@@ -155,17 +238,21 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         selectMinWidth: 300,
         selectMaxWidth: 320,
         mainFlexDirection: 'row',
-        mainGap: '60px',
-        circleSize: 200,
-        circleMarginTop: 250,
-        circleMinWidth: 300,
+        mainGap: '20px',
+        circleMarginTop: 200,
+        circleWidth: '31.34%',
+        circlePaddingLeft: 100,
         rightSectionMarginLeft: 100,
         titleFontSize: 28,
         statsFlexDirection: 'row',
-        statsGap: '30px',
-        tableFontSize: 20,
+        statsGap: '32%',
+        tableFontSize: 16,
+        tablePadding: 12,
         padding: 24,
-        marginBottom: 100
+        marginBottom: 100,
+        panelHeight: 'auto',
+        dateWidth: '30%',
+        statusWidth: '70%'
       };
     }
   };
@@ -174,7 +261,6 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
 
   return (
     <div style={{ marginBottom: responsive.marginBottom }}>
-      {/* Header */}
       <div style={{ 
         display: 'flex', 
         flexDirection: responsive.headerFlexDirection,
@@ -185,9 +271,9 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
       }}>
         <h2
           style={{
-            fontSize: isMobile ? 18 : isTablet ? 19 : 20,
-            fontWeight: 600,
-            color: colors?.text || '#1F2937',
+            fontSize: isMobile ? 18 : isTinyTablet ? 18 : isSmallTablet ? 18 : isTablet ? 19 : 20,
+            fontWeight: 133,
+            color: colors?.text || '#09090B',
             margin: 0,
             flexShrink: 0,
           }}
@@ -226,7 +312,7 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
                     style={{
                       color: colors?.mode === 'dark' ? '#ffffff' : '#000000',
                       fontSize: isMobile ? 14 : 16,
-                      fontWeight: 500,
+                      fontWeight: 133,
                     }}
                   >
                     {t('Select Course')}
@@ -239,7 +325,7 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
                   style={{
                     color: colors?.mode === 'dark' ? '#ffffff' : '#000000',
                     fontSize: isMobile ? 14 : 16,
-                    fontWeight: 500,
+                    fontWeight: 133,
                   }}
                 >
                   {selectedRecord ? `${selectedRecord.code} - ${selectedRecord.name}` : ''}
@@ -286,8 +372,8 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
                 paddingTop: '8px !important',
                 paddingBottom: '8px !important',
                 color: `${colors?.mode === 'dark' ? '#ffffff' : '#000000'} !important`,
-                fontSize: `${isMobile ? 14 : 16}px !important`,
-                fontWeight: '500 !important',
+                fontSize: `${isMobile ? 12 : 14}px !important`,
+                fontWeight: '133 !important',
                 height: `${isMobile ? 20 : 24}px !important`,
                 display: 'flex',
                 alignItems: 'center',
@@ -301,7 +387,7 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
                 sx={{
                   color: colors?.mode === 'dark' ? '#ffffff' : '#000000',
                   fontSize: isMobile ? 14 : 16,
-                  fontWeight: 500,
+                  fontWeight: 133,
                   '&:hover': {
                     backgroundColor: colors?.mode === 'dark' ? '#374151' : '#F3F4F6',
                   },
@@ -320,7 +406,6 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         </FormControl>
       </div>
 
-      {/* رسالة الخطأ (تظهر فقط لو API شغال وحصل خطأ) */}
       {error && ENABLE_EXTERNAL_API && (
         <div
           style={{
@@ -336,7 +421,6 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
         </div>
       )}
 
-      {/* Main Panel */}
       <div
         style={{
           backgroundColor: colors?.box || '#ffffff',
@@ -346,6 +430,7 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
           boxShadow: colors?.mode === 'dark' ? '0 1px 3px rgba(0, 0, 0, 0.2)' : '0 1px 3px rgba(0,0,0,0.08)',
           border: colors?.mode === 'dark' ? '1px solid #374151' : '1px solid #E5E7EB',
           opacity: loading && ENABLE_EXTERNAL_API ? 0.7 : 1,
+          height: responsive.panelHeight
         }}
       >
         
@@ -355,66 +440,84 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
           gap: responsive.mainGap, 
           alignItems: responsive.mainFlexDirection === 'row' ? 'flex-start' : 'center' 
         }}>
-          {/* Left side - Circle Progress */}
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            minWidth: responsive.circleMinWidth, 
-            marginTop: responsive.circleMarginTop,
-            width: responsive.mainFlexDirection === 'column' ? '100%' : 'auto'
+            width: responsive.circleWidth,
+            paddingLeft: responsive.circlePaddingLeft,
+            marginTop: responsive.circleMarginTop
           }}>
-            <div style={{ position: 'relative', marginBottom: 20 }}>
-              <svg width={responsive.circleSize} height={responsive.circleSize} style={{ transform: 'rotate(-90deg)' }}>
-                <circle
-                  cx={responsive.circleSize/2}
-                  cy={responsive.circleSize/2}
-                  r={responsive.circleSize/2 - 20}
-                  fill="none"
-                  stroke={colors?.mode === 'dark' ? '#374151' : '#E5E7EB'}
-                  strokeWidth={isMobile ? 8 : 12}
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx={responsive.circleSize/2}
-                  cy={responsive.circleSize/2}
-                  r={responsive.circleSize/2 - 20}
-                  fill="none"
-                  stroke="#4F8CF7"
-                  strokeWidth={isMobile ? 8 : 12}
-                  strokeLinecap="round"
-                  strokeDasharray={`${(courseData.percentage / 100) * (2 * Math.PI * (responsive.circleSize/2 - 20))} ${2 * Math.PI * (responsive.circleSize/2 - 20)}`}
-                  strokeDashoffset="0"
-                  style={{ transition: 'stroke-dasharray 0.8s ease-in-out' }}
-                />
-              </svg>
-
+            <div style={{ position: 'relative', marginBottom: isLaptop ? 10 : 20 }}>
               <div
                 style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  textAlign: 'center',
-                  color: colors?.text || '#1F2937',
+                  position: 'relative',
+                  width: 'clamp(100px, 100%, 160px)',
+                  height: 'clamp(100px, 100%, 160px)',
+                  maxWidth: '160px',
+                  margin: '0 auto',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <div style={{ fontSize: isMobile ? 28 : isTablet ? 32 : 36, fontWeight: '400', color: '#4F8CF7' }}>
-                  {courseData.percentage}%
-                </div>
-                <div style={{ fontSize: isMobile ? 12 : 14, color: colors?.textSecondary || '#9CA3AF', marginTop: 4 }}>
-                  {t('Attendance')}
+                <CircularProgressbar
+                  value={courseData.percentage}
+                  text=""
+                  styles={buildStyles({
+                    pathColor: '#3B82F6',
+                    trailColor: '#E5E7EB',
+                    pathTransitionDuration: 0.8,
+                    strokeLinecap: 'round',
+                  })}
+                  strokeWidth={7}
+                />
+                
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      lineHeight: '32px',
+                      width: '52px',
+                      fontWeight: '133',
+                      color: '#3B82F6',
+                    }}
+                  >
+                    {courseData.percentage}%
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      lineHeight: '16px',
+                      width: '66px',
+                      color: colors?.textSecondary || '#9CA3AF',
+                      marginTop: 0,
+                    }}
+                  >
+                    {t('Attendance')}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div style={{ fontSize: isMobile ? 13 : 15, color: colors?.textSecondary || '#9CA3AF', textAlign: 'center' }}>
+            <div style={{ fontSize: isMobile ? 13 : isLaptop ? 11 : 15, color: '#71717A', textAlign: 'center' }}>
               {courseData.attended} / {courseData.totalClasses} {t('sessions')}
             </div>
           </div>
 
-          {/* Right side - Course Info + Sessions Table */}
           <div style={{ 
             flex: 1, 
             marginLeft: responsive.rightSectionMarginLeft,
@@ -423,9 +526,9 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
             <h3
               style={{
                 fontSize: responsive.titleFontSize,
-                fontWeight: 600,
-                color: colors?.text || '#1F2937',
-                margin: '0 0 8px 0',
+                fontWeight: 133,
+                color: colors?.text || '#09090B',
+                margin: '0 0 4px 0',
                 textAlign: 'left',
               }}
             >
@@ -433,9 +536,9 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
             </h3>
             <p
               style={{
-                fontSize: isMobile ? 14 : 16,
-                color: colors?.textSecondary || '#9CA3AF',
-                margin: '0 0 20px 0',
+                fontSize: isMobile ? 14 : isLaptop ? 12 : 16,
+                color: '#71717A',
+                margin: '0 0 12px 0',
                 textAlign: 'left',
               }}
             >
@@ -445,39 +548,38 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
             <div style={{ 
               display: 'flex', 
               flexDirection: responsive.statsFlexDirection,
-              justifyContent: responsive.statsFlexDirection === 'row' ? 'space-between' : 'flex-start',
+              justifyContent: 'flex-start',
               gap: responsive.statsGap, 
-              marginBottom: 30 
+              marginBottom: isLaptop ? 15 : 30
             }}>
               <div style={{ textAlign: 'left' }}>
-                <div style={{ color: colors?.textSecondary || '#9CA3AF', fontSize: isMobile ? 14 : 16, marginBottom: 4, fontWeight: 500 }}>
+                <div style={{ color: '#71717A', fontSize: isMobile ? 14 : isTinyTablet ? 14 : isSmallTablet ? 13 : isLaptop ? 11 : 16, marginBottom: 4, fontWeight: 133 }}>
                   {t('Total Classes')}
                 </div>
-                <div style={{ color: colors?.text || '#1F2937', fontWeight: '400', fontSize: isMobile ? 20 : 24 }}>
+                <div style={{ color: colors?.text || '#09090B', fontWeight: '133', fontSize: isMobile ? 20 : isTinyTablet ? 20 : isSmallTablet ? 18 : isLaptop ? 16 : 24 }}>
                   {courseData.totalClasses}
                 </div>
               </div>
 
               <div style={{ textAlign: 'left' }}>
-                <div style={{ color: colors?.textSecondary || '#9CA3AF', fontSize: isMobile ? 14 : 16, marginBottom: 4, fontWeight: 500 }}>
+                <div style={{ color: '#71717A', fontSize: isMobile ? 14 : isTinyTablet ? 14 : isSmallTablet ? 13 : isLaptop ? 11 : 16, marginBottom: 4, fontWeight: 133 }}>
                   {t('Attended')}
                 </div>
-                <div style={{ color: '#22C55E', fontWeight: '400', fontSize: isMobile ? 20 : 24 }}>
+                <div style={{ color: '#16A34A', fontWeight: '133', fontSize: isMobile ? 20 : isTinyTablet ? 20 : isSmallTablet ? 18 : isLaptop ? 16 : 24 }}>
                   {courseData.attended}
                 </div>
               </div>
 
               <div style={{ textAlign: 'left' }}>
-                <div style={{ color: colors?.textSecondary || '#9CA3AF', fontSize: isMobile ? 14 : 16, marginBottom: 4, fontWeight: 500 }}>
+                <div style={{ color: '#71717A', fontSize: isMobile ? 14 : isTinyTablet ? 14 : isSmallTablet ? 13 : isLaptop ? 11 : 16, marginBottom: 4, fontWeight: 133 }}>
                   {t('Absences')}
                 </div>
-                <div style={{ color: '#EF4444', fontWeight: '400', fontSize: isMobile ? 20 : 24 }}>
+                <div style={{ color: '#DC2626', fontWeight: '133', fontSize: isMobile ? 20 : isTinyTablet ? 20 : isSmallTablet ? 18 : isLaptop ? 16 : 24 }}>
                   {courseData.absences}
                 </div>
               </div>
             </div>
 
-            {/* Sessions Table */}
             <div style={{ overflowX: 'auto', width: '100%' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', minWidth: isMobile ? 300 : 'auto' }}>
                 <thead>
@@ -485,26 +587,27 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
                     <th
                       style={{
                         textAlign: 'left',
-                        padding: `${isMobile ? 8 : 12}px 2px ${isMobile ? 8 : 12}px 0`,
-                        color: '#9CA3AF',
-                        fontSize: isMobile ? 13 : 15,
-                        fontWeight: 500,
-                        width: '55%',
+                        padding: `${responsive.tablePadding}px 2px ${responsive.tablePadding}px 0`,
+                        color: '#71717A',
+                        fontSize: isMobile ? 13 : isLaptop ? 11 : 15,
+                        fontWeight: 133,
+                        width: responsive.dateWidth,
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                         {t('Date')}
-                        <SwapVertIcon style={{ fontSize: isMobile ? 18 : 22, color: '#6B7280' }} />
+                        <SwapVertIcon style={{ fontSize: isMobile ? 18 : isLaptop ? 16 : 22, color: '#71717A' }} />
                       </div>
                     </th>
                     <th
                       style={{
                         textAlign: 'left',
-                        padding: `${isMobile ? 8 : 12}px 0 ${isMobile ? 8 : 12}px 0`,
-                        color: '#9CA3AF',
-                        fontSize: isMobile ? 13 : 15,
-                        fontWeight: 500,
-                        width: '45%',
+                        padding: `${responsive.tablePadding}px 0 ${responsive.tablePadding}px 0`,
+                        color: '#71717A',
+                        fontSize: 16,
+                        lineHeight: '20px',
+                        fontWeight: 133,
+                        width: responsive.statusWidth,
                       }}
                     >
                       {t('Status')}
@@ -526,23 +629,23 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
                     >
                       <td
                         style={{
-                          padding: `${isMobile ? 8 : 12}px 2px ${isMobile ? 8 : 12}px 0`,
-                          color: colors?.text || '#1F2937',
+                          padding: `${responsive.tablePadding}px 2px ${responsive.tablePadding}px 0`,
+                          color: colors?.text || '#09090B',
                           fontSize: responsive.tableFontSize,
-                          width: '55%',
                         }}
                       >
                         {session.date}
                       </td>
-                      <td style={{ padding: `${isMobile ? 8 : 12}px 0 ${isMobile ? 8 : 12}px 0`, fontSize: responsive.tableFontSize, width: '45%' }}>
+                      <td style={{ padding: `${responsive.tablePadding}px 0 ${responsive.tablePadding}px 0` }}>
                         <span
                           style={{
-                            backgroundColor: session.status === 'Present' ? '#D1FAE5' : '#FEE2E2',
-                            color: session.status === 'Present' ? '#22C55E' : '#EF4444',
-                            padding: isMobile ? '3px 8px' : '4px 12px',
+                            backgroundColor: session.status === 'Present' ? '#DCFCE7' : '#FEE2E2',
+                            color: session.status === 'Present' ? '#166534' : '#991B1B',
+                            padding: isMobile ? '3px 8px' : isLaptop ? '2px 8px' : '4px 12px',
                             borderRadius: 6,
-                            fontSize: isMobile ? 10 : 12,
-                            fontWeight: 500,
+                            fontSize: 12,
+                            lineHeight: '16px',
+                            fontWeight: 133,
                           }}
                         >
                           {t(session.status)}
@@ -554,7 +657,6 @@ const CourseAttendancePanel = ({ selectedCourse, setSelectedCourse, courses, det
               </table>
             </div>
 
-            {/* عرض البيانات من API (فقط لو شغال وفيه بيانات) */}
             {externalApiData && ENABLE_EXTERNAL_API && (
               <div
                 style={{

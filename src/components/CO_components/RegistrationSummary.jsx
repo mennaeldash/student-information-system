@@ -1,12 +1,6 @@
+// src/components/CO_components/RegistrationSummary.jsx
 import React from "react";
-import {
-  Box,
-  Paper,
-  Typography,
-  IconButton,
-  Divider,
-  Button,
-} from "@mui/material";
+import { Box, Paper, Typography, IconButton, Divider, Button } from "@mui/material";
 import Close from "@mui/icons-material/Close";
 import { useThemeContext } from "../../services/theme_context.jsx";
 import { useTranslation } from "react-i18next";
@@ -16,6 +10,8 @@ export default function RegistrationSummary({
   onRemove,
   maxCredits = 18,
   onSubmit,
+  submitting = false,
+  submitError = "",
 }) {
   const { colors } = useThemeContext();
   const { t } = useTranslation();
@@ -31,8 +27,6 @@ export default function RegistrationSummary({
         border: `1px solid ${colors?.border}`,
         bgcolor: colors?.box,
         p: 2,
-
-        // sticky فقط لما المساحة تسمح (من lg أو لما الحاوية كبيرة)
         position: { xs: "static", lg: "sticky" },
         top: { lg: 16 },
       }}
@@ -76,7 +70,7 @@ export default function RegistrationSummary({
               </Typography>
             </Box>
 
-            <IconButton size="small" onClick={() => onRemove(c.id)}>
+            <IconButton size="small" onClick={() => onRemove(c.id)} disabled={submitting}>
               <Close fontSize="small" />
             </IconButton>
           </Paper>
@@ -90,7 +84,10 @@ export default function RegistrationSummary({
           <span>{t("registration_summary.total_credits")}</span>
           <b>{totalCredits}</b>
         </Typography>
-        <Typography variant="body2" sx={{ display: "flex", justifyContent: "space-between", color: colors?.secondary }}>
+        <Typography
+          variant="body2"
+          sx={{ display: "flex", justifyContent: "space-between", color: colors?.secondary }}
+        >
           <span>{t("registration_summary.maximum_credits")}</span>
           <span>{maxCredits}</span>
         </Typography>
@@ -100,7 +97,7 @@ export default function RegistrationSummary({
         fullWidth
         variant="contained"
         onClick={onSubmit}
-        disabled={selected.length === 0 || overLimit}
+        disabled={selected.length === 0 || overLimit || submitting}
         sx={{
           borderRadius: 2,
           textTransform: "none",
@@ -109,12 +106,18 @@ export default function RegistrationSummary({
           color: "white !important",
         }}
       >
-        {t("registration_summary.submit_registration")}
+        {submitting ? t("loading") : t("registration_summary.submit_registration")}
       </Button>
 
       {overLimit && (
         <Typography variant="caption" sx={{ mt: 1, display: "block", color: "#dc2626" }}>
           {t("registration_summary.over_limit")}
+        </Typography>
+      )}
+
+      {!!submitError && (
+        <Typography variant="caption" sx={{ mt: 1, display: "block", color: "#dc2626" }}>
+          {submitError}
         </Typography>
       )}
     </Paper>

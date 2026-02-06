@@ -211,7 +211,7 @@ export default function RegisterBox() {
       time: "09:00 AM - 10:30 AM",
       room: "CS Building, Room 210",
       credits: 4,
-      status: "Pending",
+      status: "Approved",
     },
   ];
 

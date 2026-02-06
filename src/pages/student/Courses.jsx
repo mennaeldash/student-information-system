@@ -11,15 +11,14 @@ export default function Courses() {
 
   return (
     <Box
-      dir={i18n.dir()} // ✅ الاتجاه حسب اللغة (LTR/RTL)
+      dir={i18n.dir()}
       sx={{
         height: "100vh",
         overflow: "auto",
-        bgcolor: colors?.background, // استخدمي bgcolor بدل background لمطابقة MUI
+        bgcolor: colors?.background,
         width: "100%",
         fontFamily: colors?.fontFamily,
         color: colors?.text,
-        // حماية من التمرير الأفقي لو فيه عناصر واسعة
         overflowX: "hidden",
       }}
     >

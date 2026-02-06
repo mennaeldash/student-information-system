@@ -53,30 +53,10 @@ export default function ProfileCard({ isRTL }) {
         }}
       >
         <Typography variant="subtitle1" fontWeight={600} sx={{ fontSize: { xs: 16, sm: 18 } }}>
-          {t("basic_info", "Basic Information")}
+          {t("Basic Information", "Basic Information")}
         </Typography>
 
-        <Button
-          size="small"
-          variant="outlined"
-          sx={{
-            fontWeight: 500,
-            fontSize: { xs: 12, sm: 13 },
-            py: 0.2,
-            px: { xs: 1, sm: 1.4 },
-            color: colors?.textSecondary || "#64748B",
-            borderColor: "#e2e8f0",
-            background: "#fafbfd",
-            borderRadius: 2,
-            textTransform: "none",
-            boxShadow: "none",
-            minWidth: 0,
-            whiteSpace: "nowrap",
-            "&:hover": { borderColor: "#b6c1d4", background: "#f6faff" },
-          }}
-        >
-          {t("request_edit", "Request Edit")}
-        </Button>
+      
       </Box>
 
       <Divider sx={{ mb: { xs: 2, sm: 3 }, bgcolor: colors?.border || "#e3e8ee", height: 1 }} />
@@ -85,7 +65,6 @@ export default function ProfileCard({ isRTL }) {
       <Box
         sx={{
           display: "grid",
-          // ✅ على الموبايل نخليها عمودين: الصورة ثابتة عرض ~88px على الشمال
           gridTemplateColumns: { xs: "88px 1fr", sm: "auto 1fr" },
           gap: { xs: 2, sm: 4 },
           alignItems: "start",
@@ -97,10 +76,10 @@ export default function ProfileCard({ isRTL }) {
           sx={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",   // ✅ بدل center
+            alignItems: "flex-start",  
             justifyContent: "flex-start",
             minWidth: 0,
-            justifySelf: "start",       // ✅ يثبتها على الشمال
+            justifySelf: "start",   
           }}
         >
           <Avatar

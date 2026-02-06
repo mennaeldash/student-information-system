@@ -38,8 +38,7 @@ function StatusChip({ status, t }) {
     color: "#10B981",
     "& .MuiChip-icon": {
       color: "#10B981", 
-      mr: 0.3,            // مسافة بسيطة يمين/شمال حسب الاتجاه
-      // mt: 0,           // ما فيش داعي لرفع عمودي؛ Chip بيعمل align center
+      mr: 0.3,      
     },
   }}
 />
@@ -55,7 +54,7 @@ function StatusChip({ status, t }) {
         color: "#DC2626",
         "& .MuiChip-icon": {
           color: "#DC2626",
-          mr: 0.3,             // مسافة بسيطة بين الأيقونة والنص
+          mr: 0.3,     
         },
       }}
     />
@@ -72,8 +71,8 @@ function StatusChip({ status, t }) {
     color: "#10B981",
     "& .MuiChip-icon": {
       color: "#10B981", 
-      mr: 0.3,            // مسافة بسيطة يمين/شمال حسب الاتجاه
-      // mt: 0,           // ما فيش داعي لرفع عمودي؛ Chip بيعمل align center
+      mr: 0.3,    
+  
     },
   }}
    />;
@@ -95,7 +94,6 @@ function StatusChip({ status, t }) {
   return null;
 }
 
-/* ---------- Course card ---------- */
 export default function CourseCard({ course, selected, onRegister, onRemove }) {
   const { colors } = useThemeContext();
   const { t, i18n } = useTranslation();
@@ -124,7 +122,6 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
         marginBottom:"5px"
       }}
     >
-      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -142,7 +139,7 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
               fontWeight: 600,
               color: colors?.text || "#0F172A",
               lineHeight: 1.2,
-              // لفّ النص على الشاشات الصغيرة فقط
+        
               whiteSpace: { xs: "normal", md: "nowrap" },
               overflow: { xs: "visible", md: "hidden" },
               textOverflow: { xs: "clip", md: "ellipsis" },
@@ -169,9 +166,8 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
         </Box>
       </Box>
 
-      {/* Details */}
       <Box sx={{ display: "grid", rowGap: 2.75, minWidth: 0 }}>
-        {/* Row 1 — يتكدس تحت بعضه حتى md */}
+      
         <Box
           sx={{
             display: "grid",
@@ -182,14 +178,14 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
             minWidth: 0,
           }}
         >
-          {/* Lecture + credits */}
+        
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 1,
               minWidth: 0,
-              flexWrap: "wrap",            // ✅ يسمح ينزل سطر جديد
+              flexWrap: "wrap",      
             }}
           >
             <SchoolOutlined sx={{ fontSize: 18, color: colors?.secondary }} />
@@ -199,7 +195,7 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
             </Typography>
           </Box>
 
-          {/* Instructor */}
+    
           <Box
             sx={{
               display: "flex",
@@ -207,7 +203,7 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
               gap: 0.75,
               justifySelf: { md: isRTL ? "start" : "end" },
               minWidth: 0,
-              flexWrap: "wrap",            // ✅ يسمح ينزل سطر جديد
+              flexWrap: "wrap",           
             }}
           >
             <PersonOutline sx={{ fontSize: 18, color: colors?.secondary }} />
@@ -225,7 +221,7 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
           </Box>
         </Box>
 
-        {/* Row 2 — يتكدس تحت بعضه حتى md */}
+      
         <Box
           sx={{
             display: "grid",
@@ -236,14 +232,14 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
             minWidth: 0,
           }}
         >
-          {/* Time */}
+        
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               gap: 0.85,
               minWidth: 0,
-              flexWrap: "wrap",            // ✅
+              flexWrap: "wrap",           
             }}
           >
             <AccessTimeOutlined sx={{ fontSize: 18, color: colors?.secondary }} />
@@ -260,7 +256,6 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
             </Typography>
           </Box>
 
-          {/* Enrolled / Capacity */}
           <Box
             sx={{
               display: "flex",
@@ -268,7 +263,7 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
               gap: 0.6,
               justifySelf: { md: isRTL ? "start" : "end" },
               minWidth: 0,
-              flexWrap: "wrap",            // ✅
+              flexWrap: "wrap",            
             }}
           >
             <GroupOutlined sx={{ fontSize: 18, color: colors?.secondary }} />
@@ -289,7 +284,7 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
             sx={{
               fontSize: 13,
               color: colors?.secondary,
-              whiteSpace: "normal",       // ✅ لفّ طبيعي
+              whiteSpace: "normal",      
               overflow: "visible",
             }}
           >
@@ -297,7 +292,6 @@ export default function CourseCard({ course, selected, onRegister, onRemove }) {
           </Typography>
         </Box>
       )}
-      {/* Actions */}
       <Box
         sx={{
           display: "flex",

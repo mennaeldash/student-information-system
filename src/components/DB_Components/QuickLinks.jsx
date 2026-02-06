@@ -17,10 +17,10 @@ export default function QuickLinks() {
   const links = [
     { href: 'https://webex.com', label: 'webex', icon: <SiWebex style={{ width: 26, height: 26 }} />, iconBg: '#DBEAFE', iconColor: '#2563EB' },
     { href: 'https://cisco.com', label: 'cisco', icon: <SiCisco style={{ width: 26, height: 26 }} />, iconBg: '#DCFCE7', iconColor: '#16A34A' },
-    { href: '#grades', label: 'view_grades', icon: <BarChartIcon style={{ width: 26, height: 26 }} />, iconBg: '#F3E8FF', iconColor: '#9333EA' },
+    { href: '../../pages/student/Grades.jsx', label: 'view_grades', icon: <BarChartIcon style={{ width: 26, height: 26 }} />, iconBg: '#F3E8FF', iconColor: '#9333EA' },
     { href: '#calendar', label: 'calendar', icon: <CalendarMonthIcon style={{ width: 26, height: 26 }} />, iconBg: '#FEE2E2', iconColor: '#DC2626' },
     { href: '#moodle', label: 'moodle', icon: <SiMoodle style={{ width: 26, height: 26 }} />, iconBg: '#FEF3C7', iconColor: '#D97706' },
-    { href: '#outlook', label: 'outlook', icon: <PiMicrosoftOutlookLogoBold style={{ width: 26, height: 26 }} />, iconBg: '#E0E7FF', iconColor: '#4F46E5' },
+    { href: 'https://outlook.live.com', label: 'outlook', icon: <PiMicrosoftOutlookLogoBold style={{ width: 26, height: 26 }} />, iconBg: '#E0E7FF', iconColor: '#4F46E5' },
   ];
 
   return (
@@ -46,13 +46,12 @@ export default function QuickLinks() {
         {t("quick_links")}
       </Typography>
 
-      {/* Grid: موبايل 2 أعمدة / تابلت 3 / ديسكتوب 6 */}
       <Box
         sx={{
           display: 'grid',
           gap: { xs: 1.5, sm: 2, md: 2.5 },
           gridTemplateColumns: {
-            xs: 'repeat(2, minmax(0, 1fr))',   // ← كل اتنين جنب بعض على الموبايل
+            xs: 'repeat(2, minmax(0, 1fr))',  
             sm: 'repeat(3, minmax(0, 1fr))',
             md: 'repeat(6, minmax(0, 1fr))',
           },
@@ -67,13 +66,11 @@ export default function QuickLinks() {
               borderRadius: 3,
               border: `1px solid ${colors?.border}`,
               backgroundColor: colors?.box,
-              // طول مناسب + responsive
               height: { xs: 120, sm: 150 },
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
               '&:hover': { transform: 'translateY(-3px)', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' },
             }}
           >
-            {/* نخلّي الـ Link يتمركز تمامًا عموديًا وأفقيًا */}
             <Link
               href={link.href}
               target="_blank"
@@ -90,7 +87,6 @@ export default function QuickLinks() {
                 px: 1,
               }}
             >
-              {/* الأيقونة الدائرية */}
               <Box
                 sx={{
                   background: link.iconBg,
@@ -108,7 +104,6 @@ export default function QuickLinks() {
                 {link.icon}
               </Box>
 
-              {/* النص */}
               <Box
                 sx={{
                   fontWeight: 500,

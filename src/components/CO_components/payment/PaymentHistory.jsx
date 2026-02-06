@@ -35,7 +35,7 @@ export default function PaymentHistory({ items = [] }) {
             <Typography sx={{ fontWeight: 500, fontSize: 14 }}>{it.title}</Typography>
             <Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
               <Typography sx={{ color: "text.secondary", fontSize: 12 }}>{it.date}</Typography>
-              <Typography sx={{ fontWeight: 500, fontSize: 13 }}>£ {it.amount.toFixed(2)}</Typography>
+              <Typography sx={{ fontWeight: 500, fontSize: 13 }}>EGP {it.amount.toFixed(2)}</Typography>
             </Box>
             <Divider sx={{ my: 1 }} />
             <Typography sx={{ color: "success.main", fontSize: 12, fontWeight: 500,color:"black" }}>

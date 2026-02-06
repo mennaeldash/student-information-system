@@ -3,18 +3,16 @@ import React from "react";
 import { Box, Paper } from "@mui/material";
 import { useThemeContext } from "../../services/theme_context.jsx";
 import { useTranslation } from "react-i18next";
-
-import TAEvaluationForm from "../../components/ST-SE-components/TAEvaluationForm.jsx";
-import TAEvaluationCriteria from "../../components/ST-SE-components/TAEvaluationCriteria.jsx";
+import StudentEvaluationPage from "../../components/ST-SE-components/StudentEvaluationPage.jsx";
 
 const StudentServices = () => {
   const { colors } = useThemeContext();
   const isDark = colors?.mode === "dark";
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   return (
     <Box
-      dir={i18n.dir()}   // ✅ نفس ProfilePage
+      dir={i18n.dir()}
       sx={{
         p: { xs: 2, md: 3 },
         pt: 4,
@@ -29,19 +27,15 @@ const StudentServices = () => {
         elevation={0}
         sx={{
           width: "100%",
-          maxWidth: "none",   // stretch
-          mx: 0,              // no center
+          maxWidth: "none",
+          mx: 0,
           borderRadius: "12px",
           bgcolor: colors?.box || "#FFFFFF",
           p: { xs: 2, md: 2 },
-
-          "& > *:not(:last-child)": {
-            mb: 0,
-          },
+          "& > *:not(:last-child)": { mb: 0 },
         }}
       >
-        <TAEvaluationForm />
-        <TAEvaluationCriteria />
+        <StudentEvaluationPage />
       </Paper>
     </Box>
   );

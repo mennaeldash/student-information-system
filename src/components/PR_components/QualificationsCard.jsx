@@ -42,31 +42,9 @@ export default function QualificationsCard() {
           fontWeight={600}
           sx={{ fontSize: 18, color: colors?.text, letterSpacing: '.02em' }}
         >
-          {t('previous_qualifications')}
+          {t('Previous Qualifications')}
         </Typography>
-     <Button
-              size="small"
-              variant="outlined"
-              sx={{
-                fontWeight: 500,
-                fontSize: 13,
-                py: 0.2,
-                px: 1.4,
-                color: '#64748B',
-                borderColor: '#e2e8f0',
-                background: '#fafbfd',
-                borderRadius: 2,
-                textTransform: 'none',
-                boxShadow: 'none',
-                minWidth: 0,
-                '&:hover': {
-                  borderColor: '#b6c1d4',
-                  background: '#f6faff',
-                },
-              }}
-            >
-              {t("request_edit")}
-            </Button>
+  
       </Box>
 
       <Divider sx={{ mb: 3, borderColor: colors?.border, height: 1 }} />
@@ -80,35 +58,35 @@ export default function QualificationsCard() {
         rowGap: 1.5,
       }}>
       <Box>
-  <Label colors={colors}>{t('school_name')}</Label>
+  <Label colors={colors}>{t('School Name')}</Label>
   <Value colors={colors}>{q?.school_name ?? '-'}</Value>
 
-  <Label colors={colors}>{t('school_location')}</Label>
+  <Label colors={colors}>{t('School Location')}</Label>
   <Value colors={colors}>{q?.school_location ?? '-'}</Value>
 
-  <Label colors={colors}>{t('graduation_year')}</Label>
+  <Label colors={colors}>{t('Graduation Year')}</Label>
   <Value colors={colors}>{q?.graduation_year ?? '-'}</Value>
 
-  <Label colors={colors}>{t('seat_number')}</Label>
+  <Label colors={colors}>{t('Seat Number')}</Label>
   <Value colors={colors}>{q?.seat_number ?? '-'}</Value>
 
-  <Label colors={colors}>{t('coordination_approval_number')}</Label>
+  <Label colors={colors}>{t('Coordination Approval Number')}</Label>
   <Value colors={colors}>{q?.coordination_approval_number ?? '-'}</Value>
 
-  <Label colors={colors}>{t('coordination_approval_date')}</Label>
+  <Label colors={colors}>{t('Coordination Approval Date')}</Label>
   <Value colors={colors}>
     {(q?.coordination_approval_date || '').split('T')[0] || '-'}
   </Value>
 </Box>
 
 <Box>
-  <Label colors={colors}>{t('qualification_type')}</Label>
+  <Label colors={colors}>{t('Qualification Type')}</Label>
   <Value colors={colors}>{q?.qualification_type ?? '-'}</Value>
 
-  <Label colors={colors}>{t('score_gpa')}</Label>
+  <Label colors={colors}>{t('Score Gpa')}</Label>
   <Value colors={colors}>{q?.score ?? '-'}</Value>
 
-  <Label colors={colors}>{t('total_score')}</Label>
+  <Label colors={colors}>{t('Total Score')}</Label>
   <Value colors={colors}>{q?.total_score ?? '-'}</Value>
 </Box>
 

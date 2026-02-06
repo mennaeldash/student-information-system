@@ -112,7 +112,6 @@ export default function ProfilePage() {
         </Box>
       </Paper>
 
-      {/* Tabs — ريسبونسف + أسهم على الشاشات الصغيرة */}
       <Box
         dir={i18n.dir()}
         sx={{
@@ -144,7 +143,6 @@ export default function ProfilePage() {
               gap: { xs: 0, sm: 0.75 },
             },
 
-            // إظهار أزرار السكروول دايمًا على الموبايل حتى لو disabled
             "& .MuiTabs-scrollButtons": {
               color: colors?.secondary,
             },
@@ -161,7 +159,6 @@ export default function ProfilePage() {
               flex: { xs: "0 0 auto", sm: "0 0 auto", md: 1 },
               minHeight: 0,
               height: { xs: 26, sm: 28 },
-              // تكبير الـ minWidth في xs وخصوصًا sm (العرض ~665px) علشان نضمن overflow وبالتالي أسهم:
               minWidth: { xs: 140, sm: 155, md: 0 },
               px: { xs: 1.25, sm: 1.5 },
               borderRadius: 2,
@@ -184,12 +181,12 @@ export default function ProfilePage() {
             "& .MuiTouchRipple-root": { display: "none" },
           }}
         >
-          <Tab label={t("profile")} />
-          <Tab label={t("basic_info")} />
-          <Tab label={t("family")} />
-          <Tab label={t("contact_information")} />
-          <Tab label={t("qualifications")} />
-          <Tab label={t("Transfer_Case")} />
+          <Tab label={t("Profile")} />
+          <Tab label={t("Basic Info")} />
+          <Tab label={t("Family")} />
+          <Tab label={t("Contact Information")} />
+          <Tab label={t("Qualifications")} />
+          <Tab label={t("Transfer Case")} />
         </Tabs>
       </Box>
 

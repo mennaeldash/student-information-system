@@ -1,4 +1,4 @@
-// src/components/CourseSearchPanel.jsx
+// src/components/CO_components/CourseSearchPanel.jsx
 import React from "react";
 import {
   Box,
@@ -31,7 +31,7 @@ function useDebouncedValue(value, delay = 300) {
 
 export default function CourseSearchPanel({
   courses = [],
-  value = { query: "", semester: "all" },
+  value = { query: "", level: "all" },
   onChange = () => {},
   themeColors,
   width,
@@ -39,19 +39,31 @@ export default function CourseSearchPanel({
   const { t, i18n } = useTranslation();
   const theme = useTheme();
 
-  // توحيد اسم الألوان
   const { colors: ctxColors } = useThemeContext();
   const colors = themeColors ?? ctxColors ?? {};
 
   const [anchor, setAnchor] = React.useState(null);
   const [query, setQuery] = React.useState(value.query || "");
-  const [semester, setSemester] = React.useState(value.semester || "all");
+  const [level, setLevel] = React.useState(value.level ?? "all");
+
   const debouncedQuery = useDebouncedValue(query, 300);
 
-  const semesters = React.useMemo(() => {
-    const s = Array.from(new Set(courses.map((c) => c.semester).filter(Boolean)));
-    return ["all", ...s];
-  }, [courses]);
+const levels = React.useMemo(() => {
+  const lv = Array.from(
+    new Set(
+      courses
+        .map((c) => c?.level)
+        .filter((x) => x !== null && x !== undefined && x !== "")
+        .map((x) => String(x))
+    )
+  );
+
+  const base = ["1", "2", "3", "4"];
+
+  const merged = Array.from(new Set([...lv, ...base])).sort((a, b) => Number(a) - Number(b));
+
+  return ["all", ...merged];
+}, [courses]);
 
   const nameOptions = React.useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
@@ -61,41 +73,33 @@ export default function CourseSearchPanel({
   }, [courses, debouncedQuery]);
 
   React.useEffect(() => {
-    onChange({ query: debouncedQuery, semester });
-  }, [debouncedQuery, semester, onChange]);
+    onChange({ query: debouncedQuery, level });
+  }, [debouncedQuery, level, onChange]);
 
   const open = Boolean(anchor);
 
   return (
     <Paper
       elevation={0}
-      dir={i18n.dir()} // ✅ اتجاه حسب اللغة
+      dir={i18n.dir()}
       sx={{
         borderRadius: 4,
         border: `1px solid ${colors?.border || "#e5e7eb"}`,
         bgcolor: colors?.box || theme.palette.background.paper,
-          p: { xs: 2, md: 2 },
-width: width ?? { xs: "100%", md: "100%" },
-  minWidth: 0, 
+        p: { xs: 2, md: 2 },
+        width: width ?? { xs: "100%", md: "100%" },
+        minWidth: 0,
       }}
     >
-      {/* عنوان ووصف */}
       <Box sx={{ textAlign: "left" }}>
-        <Typography
-          variant="h5"
-          sx={{ fontWeight: 600, color: colors?.text || theme.palette.text.primary }}
-        >
+        <Typography variant="h5" sx={{ fontWeight: 600, color: colors?.text || theme.palette.text.primary }}>
           {t("course_search")}
         </Typography>
-        <Typography
-          variant="body2"
-          sx={{ color: colors?.secondary || theme.palette.text.secondary, mt: 0.5 }}
-        >
+        <Typography variant="body2" sx={{ color: colors?.secondary || theme.palette.text.secondary, mt: 0.5 }}>
           {t("search_helper")}
         </Typography>
       </Box>
 
-      {/* صف الإدخالات */}
       <Box
         sx={{
           mt: 2,
@@ -130,8 +134,6 @@ width: width ?? { xs: "100%", md: "100%" },
                     bgcolor: theme.palette.mode === "dark" ? "rgba(255,255,255,0.04)" : "#fff",
                     "& fieldset": { borderColor: colors?.border || "#E5E7EB" },
                     "&:hover fieldset": { borderColor: colors?.border || "#E5E7EB" },
-
-                    // منع الأزرق عند الـ focus
                     "&.Mui-focused": { outline: "none !important", boxShadow: "none !important" },
                     "&.Mui-focused fieldset": { borderColor: colors?.border || "#E5E7EB" },
                   },
@@ -144,7 +146,6 @@ width: width ?? { xs: "100%", md: "100%" },
           />
         </Box>
 
-        {/* زر الفلاتر */}
         <Button
           variant="outlined"
           onClick={(e) => setAnchor(e.currentTarget)}
@@ -152,7 +153,7 @@ width: width ?? { xs: "100%", md: "100%" },
           sx={{
             height: 40,
             borderRadius: 2,
-            fontSize:13,
+            fontSize: 13,
             fontWeight: 400,
             whiteSpace: "nowrap",
             borderColor: colors?.border || "divider",
@@ -163,7 +164,6 @@ width: width ?? { xs: "100%", md: "100%" },
         </Button>
       </Box>
 
-      {/* Popover للفلاتر */}
       <Popover
         open={open}
         anchorEl={anchor}
@@ -180,26 +180,24 @@ width: width ?? { xs: "100%", md: "100%" },
         }}
       >
         <Box sx={{ width: 260 }}>
-          <Typography
-            variant="subtitle2"
-            sx={{ mb: 1.5, fontWeight: 700, color: colors?.text || "text.primary" }}
-          >
+          <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 700, color: colors?.text || "text.primary" }}>
             {t("filters")}
           </Typography>
 
           <FormControl fullWidth>
-            <InputLabel id="semester-label">{t("semester")}</InputLabel>
+            <InputLabel id="level-label">{t("level")}</InputLabel>
             <Select
-              labelId="semester-label"
-              label={t("semester")}
-              value={semester}
-              onChange={(e) => setSemester(e.target.value)}
+              labelId="level-label"
+              label={t("level")}
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
             >
-              {semesters.map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s === "all" ? t("all") : s}
+              {levels.map((lv) => (
+                <MenuItem key={lv} value={lv}>
+                  {lv === "all" ? t("all") : lv}
                 </MenuItem>
               ))}
+
             </Select>
           </FormControl>
         </Box>

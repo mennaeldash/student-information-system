@@ -14,7 +14,7 @@ const CRITERIA = [
   { id: "helpfulness", labelKey: "Helpfulness", required: true },
 ];
 
-export default function TAEvaluationCriteria({ onRatingsChange }) {
+export default function TAEvaluationCriteria({ onRatingsChange, disabled = false }) {
   const { colors } = useThemeContext();
   const { t } = useTranslation();
 
@@ -123,8 +123,9 @@ export default function TAEvaluationCriteria({ onRatingsChange }) {
                       return (
                         <Button
                           key={value}
-                          onClick={() => handleSelect(criterion.id, value)}
-                          variant={selected ? "contained" : "outlined"}
+                          onClick={() => !disabled && handleSelect(criterion.id, value)}
+                            disabled={disabled}
+                            variant={selected ? "contained" : "outlined"}
                           disableRipple
                           sx={{
                             minWidth: { xs: 40, sm: 44, md: "50px" },

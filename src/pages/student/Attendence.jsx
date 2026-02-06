@@ -68,34 +68,34 @@ const AttendancePage = () => {
     {
       id: 1, name: 'Calculus I', code: 'MATH101', percentage: 80, status: 'Good',
       progressColor: '#3B82F6', statusColor: '#3B82F6', attended: 12, absences: 3,
-      totalClasses: 15, lastUpdated: 'Oct 15, 2023',
+      totalClasses: 15, lastUpdated: 'Oct 15, 2025',
     },
     {
       id: 2, name: 'Data Structures', code: 'CS201', percentage: 93, status: 'Excellent',
       progressColor: '#22C55E', statusColor: '#22C55E', attended: 14, absences: 1,
-      totalClasses: 15, lastUpdated: 'Oct 15, 2023',
+      totalClasses: 15, lastUpdated: 'Oct 15, 2025',
     },
     {
       id: 3, name: 'Physics', code: 'PHYS201', percentage: 100, status: 'Excellent',
       progressColor: '#22C55E', statusColor: '#22C55E', attended: 15, absences: 0,
-      totalClasses: 15, lastUpdated: 'Oct 15, 2023',
+      totalClasses: 15, lastUpdated: 'Oct 15, 2025',
     },
     {
       id: 4, name: 'Linear Algebra', code: 'MATH201', percentage: 80, status: 'Good',
       progressColor: '#3B82F6', statusColor: '#3B82F6', attended: 12, absences: 3,
-      totalClasses: 15, lastUpdated: 'Oct 15, 2023',
+      totalClasses: 15, lastUpdated: 'Oct 15, 2025',
     },
     {
       id: 5, name: 'Technical Writing', code: 'ENG201', percentage: 87, status: 'Good',
       progressColor: '#3B82F6', statusColor: '#3B82F6', attended: 13, absences: 2,
-      totalClasses: 15, lastUpdated: 'Oct 17, 2023',
+      totalClasses: 15, lastUpdated: 'Oct 17, 2025',
     },
   ]);
 
   const [recentActivity] = useState([
-    { subject: 'Calculus I', date: 'Sep 1, 2023', status: 'Present' },
-    { subject: 'Data Structures', date: 'Sep 2, 2023', status: 'Present' },
-    { subject: 'Physics', date: 'Sep 3, 2023', status: 'Present' },
+    { subject: 'Calculus I', date: 'Sep 1, 2025', status: 'Present' },
+    { subject: 'Data Structures', date: 'Sep 2, 2025', status: 'Present' },
+    { subject: 'Physics', date: 'Sep 3, 2025', status: 'Present' },
   ]);
 
   // دالة لحساب عرض الكارد حسب حجم الشاشة
