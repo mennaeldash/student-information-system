@@ -13,6 +13,7 @@ import Profile from "./pages/student/Profile";
 import Settings from "./pages/student/Settings";
 
 const router = createBrowserRouter([
+  
   { path: "/login", element: <Login /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
 
