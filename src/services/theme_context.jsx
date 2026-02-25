@@ -31,6 +31,17 @@ const fetch_theme_colors = async (mode = "light") => {
     cod:"#1E293B",
     label:"#020617",
         min:"#0f172a",
+info: "#2563EB",      
+warning: "#F59E0B",   
+success: "#16A34A",   
+edit: "#D97706",     
+danger: "#EF4444",     
+
+infoBg: "rgba(37,99,235,0.14)",
+warningBg: "rgba(245,158,11,0.14)",
+successBg: "rgba(22,163,74,0.14)",
+editBg: "rgba(217,119,6,0.14)",
+dangerBg: "rgba(239,68,68,0.14)",
         
 
        
@@ -54,7 +65,17 @@ const fetch_theme_colors = async (mode = "light") => {
     cod:"#EFEFF0",
         label:"#F5F7FA",
         min:"#F1F5F9",
-        
+info: "#2563EB",       
+warning: "#F59E0B",    
+success: "#16A34A",   
+edit: "#D97706",       
+danger: "#EF4444",     
+
+infoBg: "#EEF3FF",
+warningBg: "#F4F2FF",
+successBg: "#EFFFF4",
+editBg: "#FFF5E6",
+dangerBg: "#FFECEC",
 
 
     };

@@ -187,10 +187,98 @@
   "Preparation & Organization": "التحضير والتنظيم",
   "Helpfulness": "المساعدة والتعاون",
   "Rating": "التقييم",
-  "1 (Very Poor) – 10 (Excellent)": "١ (ضعيف جدًا) – ١٠ (ممتاز)"
+  "1 (Very Poor) – 10 (Excellent)": "١ (ضعيف جدًا) – ١٠ (ممتاز)",
+
+  "gradingsupport": "دعم الدرجات",
+  "requests": "الطلبات والجدولة",
+  "communication": "التواصل",
+  "evaluation": "تقييمي",
+  "setting": "الإعدادات",
+
+  "details": "التفاصيل",
+  "department": "القسم",
+
+  "teaching_assistant": "معيد",
+
+  "add sections": "إضافة شعب",
+   "Dashboard": "اللوحة الرئيسية",
+  "Attendance Tracking": "تتبع الحضور",
+  " Courses & Sections": "المقررات والشُّعب",
+  "Grading Support": "دعم التقييم",
+  "Requests & Scheduling": "الطلبات والجدولة",
+  "Communication": "التواصل",
+  "Settings": "الإعدادات",
+
+    "Courses" :"الكورسات",
+  "Sections":"الشعب ",
+  "Schedule":"الجدول",
+  "Profile Information": "معلومات الحساب",
+  "EditRequest": "طلب تعديل",
+
+  "Teaching Assistant at the Faculty of Computers and Information": "معيد بكلية الحاسبات والمعلومات",
+
+  "personal Details": "البيانات الشخصية",
+  "Name": "الاسم",
+  "Ta Id": "رقم المعيد",
+  "National Id": "الرقم القومي",
+  "Nationality": "الجنسية",
+  "Gender": "النوع",
+  "Date Of Birth": "تاريخ الميلاد",
+  "Personal Email": "البريد الشخصي",
+  "Primary Email": "البريد الجامعي",
+  "Phone Number": "رقم الهاتف",
+  "Current Address": "العنوان الحالي",
+
+  "Academic Information": "البيانات الأكاديمية",
+  "Department": "القسم",
+  "University": "الجامعة",
+  "Faculty": "الكلية",
+  "Academic Degree": "الدرجة الأكاديمية",
+  "Gpa": "المعدل (GPA)",
+  "Previous Experience": "الخبرة السابقة",
+  "Edit Request":"طلب تعديل",
+  "Today's Session": "جلسات اليوم",
+  "Weekly Hours": "ساعات هذا الأسبوع",
+  "hours": "ساعات",
+  "Total Student": "إجمالي الطلاب",
+  "This week": "هذا الأسبوع",
+  "Sessions Scheduled": "الجلسات المجدولة",
+
+  "Next Session": "الجلسة القادمة",
+  "Starting in 45 minutes": "تبدأ خلال ٤٥ دقيقة",
+  "CS101-Section 2": "CS101 - سكشن ٢",
+  "Introduction to Computer Science": "مقدمة في علوم الحاسب",
+  "CS Building 101": "مبنى CS - قاعة 101",
+  "MWF 9:00–10:00 AM": "السبت والاثنين والأربعاء 9:00–10:00 ص",
+  "100 Student": "١٠٠ طالب",
+  "Start Session": "بدء الجلسة",
+
+  "My courses": "مقرراتي",
+  "View All": "عرض الكل",
+
+  "Projects": "المشروعات",
+  "Under review": "قيد المراجعة",
+  "Accepted": "مقبول",
+  "Rejected": "مرفوض",
+  "E-Learning Platform Development": "تطوير منصة تعليم إلكتروني",
+  "Smart Traffic Management System": "نظام إدارة مرور ذكي",
+  "AI-Powered Campus Assistant Chatbot": "مساعد جامعي بالذكاء الاصطناعي",
+
+  "My Evaluation": "تقييمي",
+  "Response Rate": "نسبة الاستجابة",
+  "Average Score": "المتوسط العام",
+  "Personal Details":"المعلومات الشخصيه",
+  "Doctor Id":"رقم الدكتور"
+
 
 
 }
+
+
+
+
+
+
 
 
 

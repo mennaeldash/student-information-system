@@ -8,14 +8,11 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-// إضافة استيراد Menu و MenuItem من Material-UI
 import { Menu, MenuItem } from '@mui/material';
 
-// استيراد المكونات الجديدة
 import CourseAttendancePanel from '@/components/Atten_components/CourseAttendancePanel.jsx';
 import AttendanceCard from '@/components/Atten_components/AttendanceCard.jsx';
 
-// API Configuration
 const attendance_data_items = [
   { key: 'attendance_summary', api: 'https://api.example.com/student/attendance/summary' },
   { key: 'courses_list', api: 'https://api.example.com/student/attendance/courses' },

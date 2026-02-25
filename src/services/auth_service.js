@@ -1,156 +1,92 @@
 // src/services/auth_service.js
+import api from "./api"; 
 
-const API_BASE = "https://eelu-test.runasp.net";
+export const TOKEN_KEY = "token";
+export const PROFILE_KEY = "profileData";
 
-const ACCESS_KEY = "token";
-const REFRESH_KEY = "refreshToken";
-const REFRESH_EXP_KEY = "refreshTokenExpires"; 
-
-function setAuthTokens({ token, refreshToken, refreshTokenExpires }) {
-  if (token) localStorage.setItem(ACCESS_KEY, token);
-  if (refreshToken) localStorage.setItem(REFRESH_KEY, refreshToken);
-  if (refreshTokenExpires) localStorage.setItem(REFRESH_EXP_KEY, refreshTokenExpires);
-}
-
-export function clearAuthTokens() {
-  localStorage.removeItem(ACCESS_KEY);
-  localStorage.removeItem(REFRESH_KEY);
-  localStorage.removeItem(REFRESH_EXP_KEY);
-  localStorage.removeItem("profileData");
-  localStorage.removeItem("student_id");
-}
-
-export function getAccessToken() {
-  return localStorage.getItem(ACCESS_KEY);
-}
-export function getRefreshToken() {
-  return localStorage.getItem(REFRESH_KEY);
-}
-
-function parseJwt(token) {
+export function parseJwt(token) {
   try {
-    const base64 = token.split(".")[1];
-    const json = atob(base64.replace(/-/g, "+").replace(/_/g, "/"));
-    return JSON.parse(decodeURIComponent(escape(json)));
+    const base64Url = token.split(".")[1];
+    if (!base64Url) return null;
+
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+
+    return JSON.parse(jsonPayload);
   } catch {
     return null;
   }
 }
 
-function isTokenExpiringSoon(token, skewSeconds = 60) {
-  const payload = parseJwt(token);
-  const exp = payload?.exp;
-  if (!exp) return true;
-  const now = Math.floor(Date.now() / 1000);
-  return exp - now <= skewSeconds;
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setProfile(profile) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+}
+
+export function getProfile() {
+  try {
+    return JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+
+export function clearAuth() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(PROFILE_KEY);
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("refreshTokenExpires");
+  localStorage.removeItem("student_id");
+}
+
+export function getUserRole() {
+  const token = getToken();
+  const payload = token ? parseJwt(token) : null;
+
+  const roleClaim =
+    payload?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ??
+    payload?.role ??
+    payload?.Role ??
+    payload?.userRole ??
+    payload?.type ??
+    payload?.roles ??
+    payload?.Roles;
+
+  const role = Array.isArray(roleClaim) ? roleClaim[0] : roleClaim;
+
+  return role ? String(role).toLowerCase() : null;
+}
+
+export function isAuthed() {
+  return !!getToken();
 }
 
 export async function login(student_id, password) {
-  try {
-    const response = await fetch(`${API_BASE}/api/authentication_/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ student_id, password }),
-    });
-
-    const text = await response.text();
-    let data;
-    try {
-      data = text ? JSON.parse(text) : null;
-    } catch {
-      data = text;
-    }
-
-    if (!response.ok) {
-      const err = new Error(`HTTP ${response.status}`);
-      err.status = response.status;
-      err.body = data;
-      throw err;
-    }
-
-    setAuthTokens({
-      token: data?.token,
-      refreshToken: data?.refreshToken,
-      refreshTokenExpires: data?.refreshTokenExpires,
-    });
-
-    return data;
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
-}
 
 
-export async function refreshAccessToken() {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) {
-    const err = new Error("No refresh token found");
-    err.status = 401;
-    throw err;
-  }
-
-  const response = await fetch(`${API_BASE}/api/authentication_/refresh`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
+  const { data } = await api.post("/authentication_/login", {
+    student_id,
+    password,
   });
 
-  const text = await response.text();
-  let data;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
+  if (data?.token) setToken(data.token);
+  if (data?.profile) setProfile(data.profile);
+  if (data?.user) setProfile(data.user);
 
-  if (!response.ok) {
-    const err = new Error(`HTTP ${response.status}`);
-    err.status = response.status;
-    err.body = data;
-    throw err;
-  }
-
-  setAuthTokens({
-    token: data?.token,
-    refreshToken: data?.refreshToken || refreshToken,
-    refreshTokenExpires: data?.refreshTokenExpires,
-  });
+  if (data?.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
+  if (data?.refreshTokenExpires) localStorage.setItem("refreshTokenExpires", data.refreshTokenExpires);
 
   return data;
-}
-
-export async function getValidAccessToken() {
-  const token = getAccessToken();
-  if (!token) return null;
-
-  if (!isTokenExpiringSoon(token, 60)) return token;
-
-  const refreshed = await refreshAccessToken();
-  return refreshed?.token || getAccessToken();
-}
-
-
-export async function authFetch(url, options = {}) {
-  const token = await getValidAccessToken();
-
-  const headers = new Headers(options.headers || {});
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-
-  const res = await fetch(url, { ...options, headers });
-
-  if (res.status !== 401) return res;
-
-  try {
-    await refreshAccessToken();
-  } catch (e) {
-    clearAuthTokens();
-    throw e;
-  }
-
-  const token2 = getAccessToken();
-  const headers2 = new Headers(options.headers || {});
-  if (token2) headers2.set("Authorization", `Bearer ${token2}`);
-
-  return fetch(url, { ...options, headers: headers2 });
 }

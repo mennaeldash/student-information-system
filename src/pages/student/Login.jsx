@@ -1,8 +1,7 @@
-// src/pages/student/Login.jsx
 import { useEffect, useState } from "react";
 import { fetch_theme_colors } from "../../services/theme_service";
 import "../student/login.css";
-import { login } from "../../services/auth_service";
+import { login, getUserRole } from "../../services/auth_service";
 import * as FaIcons from "react-icons/fa";
 import ThemeToggle from "../../components/ThemeToggle";
 import { useNavigate, Link } from "react-router-dom";
@@ -16,7 +15,6 @@ export default function Login() {
   const [student_id, setStudent_id] = useState("");
   const [password, setPassword] = useState("");
   const [error_message, setError_message] = useState("");
-  const [theme_colors, setTheme_colors] = useState({});
   const [current_theme, setCurrent_theme] = useState("light");
   const [is_loading, setIs_loading] = useState(false);
   const [loogo_url, setLoogo_url] = useState("");
@@ -46,7 +44,6 @@ export default function Login() {
   useEffect(() => {
     if (all_colors) {
       const themeData = all_colors[current_theme] || {};
-      setTheme_colors(themeData);
       setLoogo_url(themeData.loogo_url || "");
       setSlogan(themeData.slogan || "");
       setHeader_text(themeData.header_text || "");
@@ -60,6 +57,18 @@ export default function Login() {
     }
   }, [current_theme, all_colors]);
 
+  const navigateByRole = () => {
+    const role = getUserRole();
+    const roleHome = {
+      student: "/student/dashboard",
+      طالب: "/student/dashboard",
+      ta: "/ta/dashboard",
+      assistant: "/ta/dashboard",
+      معيد: "/ta/dashboard",
+    };
+navigate("/role-gate", { replace: true });
+  };
+
   const handle_submit = async (e) => {
     e.preventDefault();
     setIs_loading(true);
@@ -68,24 +77,16 @@ export default function Login() {
     try {
       const result = await login(student_id, password);
 
-      if (result?.token) localStorage.setItem("token", result.token);
-      if (result?.refreshToken) localStorage.setItem("refreshToken", result.refreshToken);
-      if (result?.refreshTokenExpires) localStorage.setItem("refreshTokenExpires", result.refreshTokenExpires);
-
-      if (result?.profile) {
-        localStorage.setItem("profileData", JSON.stringify(result.profile));
-      }
-
-      if (result?.token || result?.profile) {
+      if (result?.token || result?.profile || result?.user) {
         localStorage.setItem("student_id", student_id);
-        navigate("/dashboard", { replace: true });
+        navigateByRole();
       } else {
         setError_message("Invalid Student ID or Password");
       }
     } catch (error) {
       console.error("Error during login:", error);
       setError_message(
-        error?.status === 401
+        error?.response?.status === 401
           ? "Invalid Student ID or Password"
           : "Something went wrong, please try again later"
       );
@@ -122,12 +123,7 @@ export default function Login() {
       <div className="login_page_container ">
         <div className="left_side">
           <div className="logo_wrapper">
-            <img
-              alt="EELU_Logo"
-              src={loogo_url }
-              className="logo_left"
-            
-            />
+            <img alt="EELU_Logo" src={loogo_url} className="logo_left" />
             <p className="left_text">{slogan}</p>
           </div>
         </div>

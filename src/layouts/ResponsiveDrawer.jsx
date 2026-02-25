@@ -60,17 +60,21 @@ function ResponsiveDrawer(props) {
   const handleLogout = () => { localStorage.clear(); navigate('/login'); };
   const toggleDarkMode = () => setMode(mode === 'dark' ? 'light' : 'dark');
 
-  const menuItems = [
-    { id: 1, key: 'dashboard', icon: <HomeIcon />, to: '/dashboard' },
-        { id: 2, key: 'profile', icon: <AccountCircleIcon />, to: '/profile' },
-    { id: 3, key: 'courses', icon: <ImportContactsIcon />, to: '/courses' },
-    { id: 4, key: 'grades', icon: <AlignVerticalBottomIcon />, to: '/grades' },
-    { id: 5, key: 'attendance', icon: <CalendarTodayIcon />, to: '/attendance' },
-    { id: 6, key: 'Student Services', icon: <CalendarTodayIcon />, to: '/StudentServices' },
-    { id: 7, key: 'settings', icon: <SettingsIcon />, to: '/settings' },
-  ];
+const menuItems = [
+  { id: 1, key: "dashboard", icon: <HomeIcon />, to: "/student/dashboard" },
+  { id: 2, key: "profile", icon: <AccountCircleIcon />, to: "/student/profile" },
+  { id: 3, key: "courses", icon: <ImportContactsIcon />, to: "/student/courses" },
+  { id: 4, key: "grades", icon: <AlignVerticalBottomIcon />, to: "/student/grades" },
+  { id: 5, key: "attendance", icon: <CalendarTodayIcon />, to: "/student/attendance" },
+  { id: 6, key: "Student Services", icon: <CalendarTodayIcon />, to: "/student/StudentServices" },
+  { id: 7, key: "settings", icon: <SettingsIcon />, to: "/student/settings" },
+];
 
-  const activeMenuItem = menuItems.find(item => location.pathname === item.to);
+const activeMenuItem = menuItems.find(
+  (item) =>
+    location.pathname === item.to ||
+    location.pathname.startsWith(item.to + "/")
+);
   const pageTitle = activeMenuItem ? t(activeMenuItem.key) : '';
 
   const container = windowProp !== undefined ? () => windowProp().document.body : undefined;
@@ -90,7 +94,9 @@ function ResponsiveDrawer(props) {
         elevation={0}
         sx={{
           width: { xs: '100%', sm: `calc(100% - ${DRAWER_WIDTH}px)` },
-          ml: { sm: `${DRAWER_WIDTH}px` },
+// ...(i18n.language === "ar"
+//   ? { mr: { sm: `${DRAWER_WIDTH}px` } }
+//   : { ml: { sm: `${DRAWER_WIDTH}px` } }),
           bgcolor: colors?.box,
           color: colors?.secondary,
           fontFamily: colors?.fontFamily,
@@ -107,7 +113,6 @@ function ResponsiveDrawer(props) {
             px: { xs: 1, sm: 2, md: 3 },
           }}
         >
-          {/* يسار: عنوان الصفحة + زر منيو يظهر فقط على XS لفتح السايدبار */}
           <Box sx={{ display: 'flex', gap: 1.25, alignItems: 'center', minWidth: 0 }}>
             <IconButton
               color="inherit"
@@ -134,7 +139,6 @@ function ResponsiveDrawer(props) {
             </Typography>
           </Box>
 
-          {/* يمين: التاريخ + الكنترولز */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography
               sx={{
@@ -238,7 +242,6 @@ function ResponsiveDrawer(props) {
           color: colors?.text,
           fontFamily: colors?.fontFamily,
           mt: '73px',
-          // ↓ قلّلنا الجوانب على الموبايل لزيادة عرض المحتوى
           paddingInline: { xs: '3px', sm: '16px', md: '10px' },
           maxWidth: 'none',
           mx: 0,

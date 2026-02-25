@@ -122,7 +122,7 @@
     "prerequisites": "Prerequisites",
     "register": "Register",
     "remove": "Remove",
-     "academic_registration": "Academic Registration",
+    "academic_registration": "Academic Registration",
   "epayment": "E-Payment",
   "Register for courses for the upcoming semester according to your academic plan.": "Register for courses for the upcoming semester according to your academic plan.",
   "Registration deadline": "Registration Deadline",
@@ -178,7 +178,95 @@
   "1 (Very Poor) – 10 (Excellent)": "1 (Very Poor) – 10 (Excellent)"
 
 
-}
+},
+
+  "teaching_assistant": "Teaching Assistant",
+  "gradingsupport": "gradingsupport",
+  "requests": "requests",
+  "communication": "communication",
+  "evaluation": "evaluation",
+  "setting": "setting",
+
+
+
+   "Dashboard": "Dashboard",
+  "Profile": "Profile",
+  "Attendance Tracking": "Attendance Tracking",
+  " Courses & Sections": "Courses & Sections",
+  "Grading Support": "Grading Support",
+  "Requests & Scheduling": "Requests & Scheduling",
+  "Communication": "Communication",
+  "Settings": "Settings",
+
+  "Teaching Assistant": "Teaching Assistant",
+
+  "details": "Details",
+  "department": "Department",
+  "coordinator": "Coordinator",
+
+  "add sections": "add sections",
+  "Courses" :"Courses",
+  "Sections":"Sections ",
+  "Schedule":"Schedule",
+   "Profile Information": "Profile Information",
+  "EditRequest": "Edit Request",
+
+  "Teaching Assistant at the Faculty of Computers and Information": "Teaching Assistant at the Faculty of Computers and Information",
+
+  "personal Details": "Personal Details",
+  "Name": "Name",
+  "Ta Id": "TA ID",
+  "National Id": "National ID",
+  "Nationality": "Nationality",
+  "Gender": "Gender",
+  "Date Of Birth": "Date of Birth",
+
+  "Contact Information": "Contact Information",
+  "Personal Email": "Personal Email",
+  "Primary Email": "Primary Email",
+  "Phone Number": "Phone Number",
+  "Current Address": "Current Address",
+
+  "Academic Information": "Academic Information",
+  "Department": "Department",
+  "University": "University",
+  "Faculty": "Faculty",
+  "Academic Degree": "Academic Degree",
+  "Gpa": "GPA",
+  "Graduation Year": "Graduation Year",
+  "Previous Experience": "Previous Experience",
+  "Today's Session": "Today's Session",
+  "Weekly Hours": "Weekly Hours",
+  "hours": "hours",
+  "Total Student": "Total Student",
+  "This week": "This week",
+  "Sessions Scheduled": "Sessions Scheduled",
+
+  "Next Session": "Next Session",
+  "Starting in 45 minutes": "Starting in 45 minutes",
+  "CS101-Section 2": "CS101-Section 2",
+  "Introduction to Computer Science": "Introduction to Computer Science",
+  "CS Building 101": "CS Building 101",
+  "MWF 9:00–10:00 AM": "MWF 9:00–10:00 AM",
+  "100 Student": "100 Student",
+  "Start Session": "Start Session",
+
+  "My courses": "My courses",
+  "View All": "View All",
+
+  "Projects": "Projects",
+  "Under review": "Under review",
+  "Accepted": "Accepted",
+  "Rejected": "Rejected",
+  "E-Learning Platform Development": "E-Learning Platform Development",
+  "Smart Traffic Management System": "Smart Traffic Management System",
+  "AI-Powered Campus Assistant Chatbot": "AI-Powered Campus Assistant Chatbot",
+
+  "My Evaluation": "My Evaluation",
+  "Response Rate": "Response Rate",
+  "Average Score": "Average Score"
+
+
 
 }
 
