@@ -35,6 +35,7 @@ import DoctorProfile from "./pages/doctor/profile.jsx";
 import DoctorCourses from "./pages/doctor/courses.jsx";
 import DoctorSchedule from "./pages/doctor/schedule.jsx";
 import DoctorSettings from "./pages/doctor/settings.jsx";
+import DoctorGradingSupport from"./pages/doctor/gradingsupport.jsx"
 
 function Unauthorized() {
   return (
@@ -105,7 +106,7 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <DoctorDashboard /> },
       { path: "profile", element: <DoctorProfile /> },
-      { path: "courses", element: <DoctorCourses /> },
+      { path: "gradingsupport", element: <DoctorGradingSupport /> },
       { path: "schedule", element: <DoctorSchedule /> },
       { path: "settings", element: <DoctorSettings /> },
     ],

@@ -28,7 +28,10 @@ import { useTranslation } from "react-i18next";
 
 import DrawerContent from "../components/doctor/DoctorDrawerContent";
 import { useThemeContext } from "../services/theme_context";
+import {
 
+  ChartColumn,
+} from "lucide-react";
 const DRAWER_WIDTH = 250;
 
 function DoctorResponsiveDrawer(props) {
@@ -67,7 +70,7 @@ function DoctorResponsiveDrawer(props) {
   const menuItems = [
     { id: 1, key: "dashboard", icon: <HomeIcon />, to: "/doctor/dashboard" },
     { id: 2, key: "profile", icon: <AccountCircleIcon />, to: "/doctor/profile" },
-    { id: 3, key: "courses", icon: <ImportContactsIcon />, to: "/doctor/courses" },
+    { id: 3, key: "Grading Support", icon: <ChartColumn />, to: "/doctor/gradingsupport" },
     { id: 4, key: "schedule", icon: <CalendarTodayIcon />, to: "/doctor/schedule" },
     { id: 5, key: "settings", icon: <SettingsIcon />, to: "/doctor/settings" },
   ];

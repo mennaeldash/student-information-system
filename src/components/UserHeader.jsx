@@ -2,39 +2,36 @@ import React from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useThemeContext } from '../services/theme_context.jsx';
+import UseProfile from "../hooks/UseProfile";
 
 const UserHeader = ({ userInfo, t, onMenuClick }) => {
   const { colors } = useThemeContext();
+  const { profile, error } = UseProfile();
 
   return (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',   // ← عشان المنيو يبقى يمين
+        justifyContent: 'space-between',   
         height: 65,
         px: 2,
         bgcolor: colors?.box,
         fontFamily: colors?.fontFamily || 'Arial, sans-serif',
       }}
     >
-      {/* الاسم + الأفاتار (صورة افتراضية من ui-avatars) */}
       <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
-        <img
-          src={
-            userInfo.avatar ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(userInfo.name)}`
-          }
-          alt={userInfo.name}
-          style={{
-            width: 40,
+  
+            {profile?.avatar ? (
+  <img src={profile.avatar} alt="avatar" style={{ width: 40,
             height: 40,
             borderRadius: '50%',
             objectFit: 'cover',
             border: `2px solid ${colors?.border || '#eee'}`,
-            marginInlineEnd: 11,
-          }}
-        />
+            marginInlineEnd: 11,}} />
+) : (
+  (userInfo.name || "?").charAt(0)
+)}
         <Box sx={{ minWidth: 0 }}>
           <Typography
             fontWeight="bold"
@@ -43,15 +40,14 @@ const UserHeader = ({ userInfo, t, onMenuClick }) => {
             sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
             title={userInfo?.name}
           >
-            {userInfo.name || t('student')}
+  {profile?.nameEn || "-"}
           </Typography>
           <Typography fontSize="12px" color={colors?.secondary || '#64748B'}>
-            {userInfo.id}
-          </Typography>
+{profile?.student_id || "-"}      
+    </Typography>
         </Box>
       </Box>
 
-      {/* زر المنيو داخل السايدبار */}
    <IconButton
   onClick={onMenuClick}
   size="small"

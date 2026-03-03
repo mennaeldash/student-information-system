@@ -1,3 +1,4 @@
+// src/pages/assistant/registrationrequests.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
@@ -23,19 +24,15 @@ const DUMMY = [
   { id: 10, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "under_review" },
   { id: 11, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "under_review" },
   { id: 12, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "approved" },
-    { id: 13, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "approved" },
+  { id: 13, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "approved" },
   { id: 14, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "approved" },
   { id: 15, studentName: "Mohamed Yasser Mohamed", studentId: "2200914", program: "IT", level: "Year 4", requestCredit: "16/18", status: "approved" },
-
 ];
 
 function buildPageList(current, total) {
   if (total <= 6) return Array.from({ length: total }, (_, i) => i + 1);
-
   if (current <= 4) return [1, 2, 3, 4, 5, "dots"];
-
   if (current >= total - 3) return ["dots", total - 4, total - 3, total - 2, total - 1, total];
-
   return ["dots", current - 1, current, current + 1, "dots_end"];
 }
 
@@ -47,7 +44,6 @@ function PaginationBar({ page, totalPages, onChange }) {
   const muted = isDark ? "rgba(226,232,240,0.55)" : "rgba(17,24,39,0.55)";
 
   const items = useMemo(() => buildPageList(page, totalPages), [page, totalPages]);
-
   if (totalPages <= 1) return null;
 
   return (
@@ -65,10 +61,7 @@ function PaginationBar({ page, totalPages, onChange }) {
       <IconButton
         onClick={() => onChange(Math.max(1, page - 1))}
         disabled={page === 1}
-        sx={{
-          p: 0.5,
-          color: page === 1 ? muted : textColor,
-        }}
+        sx={{ p: 0.5, color: page === 1 ? muted : textColor }}
       >
         <ChevronLeftRoundedIcon />
       </IconButton>
@@ -79,12 +72,7 @@ function PaginationBar({ page, totalPages, onChange }) {
             return (
               <Typography
                 key={`${it}-${idx}`}
-                sx={{
-                  fontFamily: ff,
-                  fontSize: "18px",
-                  fontWeight: 400,
-                  color: textColor,
-                }}
+                sx={{ fontFamily: ff, fontSize: "18px", fontWeight: 400, color: textColor }}
               >
                 ...
               </Typography>
@@ -116,10 +104,7 @@ function PaginationBar({ page, totalPages, onChange }) {
       <IconButton
         onClick={() => onChange(Math.min(totalPages, page + 1))}
         disabled={page === totalPages}
-        sx={{
-          p: 0.5,
-          color: page === totalPages ? muted : textColor,
-        }}
+        sx={{ p: 0.5, color: page === totalPages ? muted : textColor }}
       >
         <ChevronRightRoundedIcon />
       </IconButton>
@@ -134,7 +119,7 @@ export default function TARegistrationRequests() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const ITEMS_PER_PAGE = 6; 
+  const ITEMS_PER_PAGE = 6;
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
@@ -151,10 +136,10 @@ export default function TARegistrationRequests() {
     });
   }, [search, filter]);
 
-  const totalPages = useMemo(() => {
-    const t = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-    return Math.max(1, t);
-  }, [filtered.length]);
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE)),
+    [filtered.length]
+  );
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -198,12 +183,12 @@ export default function TARegistrationRequests() {
           search={search}
           onSearchChange={(v) => {
             setSearch(v);
-            setPage(1); 
+            setPage(1);
           }}
           filter={filter}
           onFilterChange={(v) => {
             setFilter(v);
-            setPage(1); 
+            setPage(1);
           }}
         />
 
@@ -211,9 +196,13 @@ export default function TARegistrationRequests() {
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 635px)" },
-              justifyContent: "space-between",
-              gap: "32px",
+              // ✅ موبايل: عمود واحد / ديسكتوب: عمودين
+              gridTemplateColumns: {
+                xs: "1fr",
+                md: "repeat(2, minmax(0, 635px))",
+              },
+              justifyContent: { xs: "stretch", md: "space-between" },
+    gap: { xs: "18px", md: "32px" }, // ✅ أصغر على الموبايل
             }}
           >
             {paged.map((item) => (

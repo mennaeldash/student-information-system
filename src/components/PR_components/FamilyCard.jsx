@@ -10,7 +10,7 @@ export default function FamilyCard() {
 
   const { colors } = useThemeContext();
   const { t } = useTranslation();
-      const { family, error } = UseProfile(); // ✅ جاي من hook
+      const { family, error } = UseProfile(); 
   
 
 
@@ -32,7 +32,6 @@ export default function FamilyCard() {
         color: colors?.text,
       }}
     >
-      {/* Header مع زر Request Edit */}
       <Box
        sx={{
          display: 'flex', 

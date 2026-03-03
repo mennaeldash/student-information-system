@@ -1,4 +1,4 @@
-// src/hooks/registration_service.js
+
 import api from "../services/api";
 
 const REGISTRATION_ENDPOINT = "/Registration";
@@ -25,4 +25,17 @@ export async function removeRegistrationByOfferingId_Query(courseOfferingId) {
     params: { courseOfferingId: id },
   });
   return data;
+}
+
+
+export async function removeRegistrationSmart(courseOfferingId) {
+  try {
+    return await removeRegistrationByOfferingId(courseOfferingId);
+  } catch (e) {
+    const status = e?.response?.status;
+    if (status === 404 || status === 405) {
+      return await removeRegistrationByOfferingId_Query(courseOfferingId);
+    }
+    throw e;
+  }
 }

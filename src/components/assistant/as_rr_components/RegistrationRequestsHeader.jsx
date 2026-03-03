@@ -1,3 +1,4 @@
+// src/components/assistant/as_rr_components/RegistrationRequestsHeader.jsx
 import React from "react";
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   FormControl,
   Chip,
 } from "@mui/material";
+import GlobalStyles from "@mui/material/GlobalStyles";
 import SearchIcon from "@mui/icons-material/Search";
 import TuneIcon from "@mui/icons-material/Tune";
 import { useThemeContext } from "../../../services/theme_context.jsx";
@@ -24,27 +26,27 @@ function StatItem({ label, value, tone }) {
     info: {
       fg: colors?.info || "#2563EB",
       bg: colors?.infoBg || "#EEF3FF",
-      bgDark: colors?.infoBg || "rgba(37,99,235,0.14)",
+      bgDark: "rgba(37,99,235,0.14)",
     },
     warning: {
       fg: colors?.warning || "#F59E0B",
       bg: colors?.warningBg || "#F4F2FF",
-      bgDark: colors?.warningBg || "rgba(245,158,11,0.14)",
+      bgDark: "rgba(245,158,11,0.14)",
     },
     success: {
       fg: colors?.success || "#16A34A",
       bg: colors?.successBg || "#EFFFF4",
-      bgDark: colors?.successBg || "rgba(22,163,74,0.14)",
+      bgDark: "rgba(22,163,74,0.14)",
     },
     edit: {
       fg: colors?.edit || "#D97706",
       bg: colors?.editBg || "#FFF5E6",
-      bgDark: colors?.editBg || "rgba(217,119,6,0.14)",
+      bgDark: "rgba(217,119,6,0.14)",
     },
     danger: {
       fg: colors?.danger || "#EF4444",
       bg: colors?.dangerBg || "#FFECEC",
-      bgDark: colors?.dangerBg || "rgba(239,68,68,0.14)",
+      bgDark: "rgba(239,68,68,0.14)",
     },
   };
 
@@ -58,7 +60,7 @@ function StatItem({ label, value, tone }) {
           fontSize: "16px",
           fontWeight: 400,
           lineHeight: "20px",
-          color: colors?.text ,
+          color: colors?.text,
           whiteSpace: "nowrap",
         }}
       >
@@ -98,15 +100,74 @@ export default function RegistrationRequestsHeader({
   const isDark = colors?.mode === "dark";
 
   const secondaryText = isDark ? "rgba(226,232,240,0.75)" : "#6B7280";
+  const borderIdle = isDark ? "rgba(255,255,255,0.12)" : "#E5E7EB";
+  const borderHover = isDark ? "rgba(255,255,255,0.18)" : "#D1D5DB";
+
+  // ✅ شكل الحقول
+  const inputSx = {
+    height: "48px",
+    borderRadius: "8px",
+    boxShadow: "none",
+    bgcolor: isDark ? "rgba(255,255,255,0.04)" : "#F8F8F8",
+    fontFamily: ff,
+
+    // (مساعد) بس الأساس هيكون من GlobalStyles بـ !important
+    "& .MuiOutlinedInput-notchedOutline": { borderColor: borderIdle },
+    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: borderHover },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: borderIdle,
+      borderWidth: "1px",
+    },
+    "&.Mui-focused": { boxShadow: "none" },
+    "&:focus-within": { boxShadow: "none" },
+
+    "& input": { outline: "none" },
+    "& input:focus": { outline: "none" },
+    "& input:focus-visible": { outline: "none" },
+  };
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-        maxWidth: "1304px",
-        mx: "auto",
-      }}
-    >
+    <Box className="rrNoBlue" sx={{ width: "100%", maxWidth: "1304px", mx: "auto" }}>
+      {/* ✅ ده اللي هيقفل الأزرق 100% حتى لو Theme/GlobalStyles عندك أقوى */}
+      <GlobalStyles
+        styles={{
+          /* Outlined TextField */
+          ".rrNoBlue .MuiOutlinedInput-notchedOutline": {
+            borderColor: `${borderIdle} !important`,
+          },
+          ".rrNoBlue .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
+            {
+              borderColor: `${borderHover} !important`,
+            },
+          ".rrNoBlue .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+            {
+              borderColor: `${borderIdle} !important`,
+              borderWidth: "1px !important",
+            },
+          ".rrNoBlue .MuiOutlinedInput-root.Mui-focused": {
+            boxShadow: "none !important",
+            outline: "none !important",
+          },
+
+          /* Outlined Select (InputBase) */
+          ".rrNoBlue .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+            {
+              borderColor: `${borderIdle} !important`,
+              borderWidth: "1px !important",
+            },
+          ".rrNoBlue .MuiInputBase-root.Mui-focused": {
+            boxShadow: "none !important",
+            outline: "none !important",
+          },
+
+          /* Browser focus ring */
+          ".rrNoBlue input:focus, .rrNoBlue input:focus-visible": {
+            outline: "none !important",
+            boxShadow: "none !important",
+          },
+        }}
+      />
+
       <Box sx={{ textAlign: "center", pt: "10px" }}>
         <Typography
           sx={{
@@ -114,7 +175,7 @@ export default function RegistrationRequestsHeader({
             fontSize: "30px",
             fontWeight: 400,
             lineHeight: "36px",
-            color: isDark ? (colors?.text || "#e2e8f0") : "#000000",
+            color: isDark ? colors?.text || "#e2e8f0" : "#000000",
           }}
         >
           {title}
@@ -208,19 +269,7 @@ export default function RegistrationRequestsHeader({
           fullWidth
           size="small"
           sx={{
-            "& .MuiOutlinedInput-root": {
-              height: "48px",
-              borderRadius: "8px",
-              boxShadow: isDark ? "none" : "0px 0px 4px rgba(0,0,0,0.25)",
-              bgcolor: isDark ? "rgba(255,255,255,0.04)" : "#F8F8F8",
-              fontFamily: ff,
-              "& fieldset": {
-                borderColor: isDark ? "rgba(255,255,255,0.12)" : "#E5E7EB",
-              },
-              "&:hover fieldset": {
-                borderColor: isDark ? "rgba(255,255,255,0.18)" : "#D1D5DB",
-              },
-            },
+            "& .MuiOutlinedInput-root": inputSx,
             "& input": { fontFamily: ff, fontSize: "16px" },
           }}
           InputProps={{
@@ -243,18 +292,8 @@ export default function RegistrationRequestsHeader({
               </InputAdornment>
             }
             sx={{
-              height: "48px",
-              borderRadius: "8px",
-              boxShadow: isDark ? "none" : "0px 0px 4px rgba(0,0,0,0.25)",
+              ...inputSx,
               color: "#141B34",
-              bgcolor: isDark ? "rgba(255,255,255,0.04)" : "#F8F8F8",
-              fontFamily: ff,
-              "& fieldset": {
-                borderColor: isDark ? "rgba(255,255,255,0.12)" : "#E5E7EB",
-              },
-              "&:hover fieldset": {
-                borderColor: isDark ? "rgba(255,255,255,0.18)" : "#D1D5DB",
-              },
               "& .MuiSelect-select": {
                 display: "flex",
                 alignItems: "center",

@@ -10,15 +10,16 @@ import TransferCaseCard from "../../components/PR_components/TransferCaseCard";
 
 import { useThemeContext } from "../../services/theme_context.jsx";
 import { useTranslation } from "react-i18next";
+import UseProfile from "../../hooks/UseProfile";
 
 export default function ProfilePage() {
   const [tab, setTab] = useState(0);
   const [userInfo, setUserInfo] = useState({
-    name: "",
-    id: "",
-    avatar: "",
+  
     status: "",
   });
+    const { profile, error } = UseProfile();
+
 
   const theme = useTheme();
   const { colors } = useThemeContext();
@@ -26,9 +27,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     setUserInfo({
-      name: localStorage.getItem("user_name") || "menna mohammed",
-      id: localStorage.getItem("user_id") || "2201996",
-      avatar: localStorage.getItem("user_avatar") || "",
+
       status: localStorage.getItem("user_status") || "Active",
     });
   }, []);
@@ -61,56 +60,57 @@ export default function ProfilePage() {
           bgcolor: colors?.box || "#fff",
         }}
       >
-        <Box
-          sx={{
-            width: 75,
-            height: 75,
-            borderRadius: "50%",
-            bgcolor: colors?.border,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 32,
-            color: colors?.text || "#64748B",
-            overflow: "hidden",
-          }}
-        >
-          {userInfo.avatar ? (
-            <img
-              src={userInfo.avatar}
-              alt="avatar"
-              style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-            />
-          ) : (
-            userInfo.name.charAt(0)
-          )}
-        </Box>
+       <Box
+  sx={{
+    width: 75,
+    height: 75,
+    borderRadius: "50%",
+    bgcolor: colors?.border,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 32,
+    color: colors?.text || "#64748B",
+    overflow: "hidden",
+  }}
+>
+  {profile?.avatar ? (
+    <img
+      src={profile.avatar}
+      alt="avatar"
+      style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+    />
+  ) : (
+    ((i18n.language === "ar" ? profile?.nameAr : profile?.nameEn)?.charAt(0) ||
+      "?")
+  )}
+</Box>
 
-        <Box>
-          <Typography variant="h6" fontWeight={700} color={colors?.text}>
-            {userInfo.name}
-          </Typography>
-          <Typography variant="body2" color={colors?.secondary} mt={0.2}>
-            {t("id")}: {userInfo.id} &nbsp;
-            <span
-              style={{
-                background:
-                  userInfo.status === "Active" ? "#e2f5ea" : "#fde8e8",
-                color: userInfo.status === "Active" ? "#1aaf78" : "#dc2626",
-                fontWeight: 500,
-                borderRadius: 8,
-                padding: "2.5px 13px",
-                fontSize: "13px",
-                marginLeft: 8,
-              }}
-            >
-              {userInfo.status === "Active"
-                ? t("active") || "Active"
-                : t("inactive") || "Inactive"}
-            </span>
-          </Typography>
-        </Box>
-      </Paper>
+<Box>
+  <Typography variant="h6" fontWeight={700} color={colors?.text}>
+    {(i18n.language === "ar" ? profile?.nameAr : profile?.nameEn) || "-"}
+  </Typography>
+
+  <Typography variant="body2" color={colors?.secondary} mt={0.2}>
+    {t("id")}: {profile?.student_id || "-"} &nbsp;
+    <span
+      style={{
+        background: userInfo.status === "Active" ? "#e2f5ea" : "#fde8e8",
+        color: userInfo.status === "Active" ? "#1aaf78" : "#dc2626",
+        fontWeight: 500,
+        borderRadius: 8,
+        padding: "2.5px 13px",
+        fontSize: "13px",
+        marginLeft: 8,
+      }}
+    >
+      {userInfo.status === "Active"
+        ? t("active") || "Active"
+        : t("inactive") || "Inactive"}
+    </span>
+  </Typography>
+</Box>
+   </Paper>
 
       <Box
         dir={i18n.dir()}
