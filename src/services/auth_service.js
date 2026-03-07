@@ -1,8 +1,10 @@
 // src/services/auth_service.js
-import api from "./api"; 
+import api from "./api";
 
 export const TOKEN_KEY = "token";
 export const PROFILE_KEY = "profileData";
+export const REFRESH_TOKEN_KEY = "refreshToken";
+export const REFRESH_EXPIRES_KEY = "refreshTokenExpires";
 
 export function parseJwt(token) {
   try {
@@ -43,11 +45,19 @@ export function getProfile() {
   }
 }
 
+export function setRefreshToken(refreshToken) {
+  if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+}
+
+export function getRefreshToken() {
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
 export function clearAuth() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(PROFILE_KEY);
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("refreshTokenExpires");
+  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  localStorage.removeItem(REFRESH_EXPIRES_KEY);
   localStorage.removeItem("student_id");
 }
 
@@ -65,7 +75,6 @@ export function getUserRole() {
     payload?.Roles;
 
   const role = Array.isArray(roleClaim) ? roleClaim[0] : roleClaim;
-
   return role ? String(role).toLowerCase() : null;
 }
 
@@ -73,9 +82,26 @@ export function isAuthed() {
   return !!getToken();
 }
 
+export async function refreshAccessToken(refreshTokenOverride) {
+  const refreshToken = String(refreshTokenOverride ?? getRefreshToken() ?? "").trim();
+  if (!refreshToken) throw new Error("Missing refreshToken");
+
+  const { data } = await api.post("/authentication_/Refresh", {
+    refreshToken,
+  });
+
+  if (data?.token) setToken(data.token);
+
+  if (data?.refreshToken) setRefreshToken(data.refreshToken);
+  if (data?.refreshTokenExpires) localStorage.setItem(REFRESH_EXPIRES_KEY, data.refreshTokenExpires);
+
+  if (data?.profile) setProfile(data.profile);
+  if (data?.user) setProfile(data.user);
+
+  return data;
+}
+
 export async function login(student_id, password) {
-
-
   const { data } = await api.post("/authentication_/login", {
     student_id,
     password,
@@ -85,8 +111,16 @@ export async function login(student_id, password) {
   if (data?.profile) setProfile(data.profile);
   if (data?.user) setProfile(data.user);
 
-  if (data?.refreshToken) localStorage.setItem("refreshToken", data.refreshToken);
-  if (data?.refreshTokenExpires) localStorage.setItem("refreshTokenExpires", data.refreshTokenExpires);
+  if (data?.refreshToken) setRefreshToken(data.refreshToken);
+  if (data?.refreshTokenExpires) localStorage.setItem(REFRESH_EXPIRES_KEY, data.refreshTokenExpires);
+
+  if (data?.refreshToken) {
+    try {
+      await refreshAccessToken(data.refreshToken);
+    } catch (e) {
+      console.warn("Refresh after login failed:", e?.response?.data || e?.message || e);
+    }
+  }
 
   return data;
 }

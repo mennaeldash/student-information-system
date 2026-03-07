@@ -16,7 +16,7 @@ export default function RegistrationSummary({
   const { colors } = useThemeContext();
   const { t } = useTranslation();
 
-  const totalCredits = selected.reduce((sum, c) => sum + (c.credits || 0), 0);
+  const totalCredits = selected.reduce((sum, c) => sum + (Number(c.credits) || 0), 0);
   const overLimit = totalCredits > maxCredits;
 
   return (
@@ -48,7 +48,7 @@ export default function RegistrationSummary({
 
         {selected.map((c) => (
           <Paper
-            key={c.id}
+            key={c.courseOfferingId ?? c.id}
             elevation={0}
             sx={{
               p: 1,
@@ -70,7 +70,11 @@ export default function RegistrationSummary({
               </Typography>
             </Box>
 
-            <IconButton size="small" onClick={() => onRemove(c.id)} disabled={submitting}>
+            <IconButton
+              size="small"
+              onClick={() => onRemove(c.courseOfferingId ?? c.id)}
+              disabled={submitting}
+            >
               <Close fontSize="small" />
             </IconButton>
           </Paper>
@@ -84,6 +88,7 @@ export default function RegistrationSummary({
           <span>{t("registration_summary.total_credits")}</span>
           <b>{totalCredits}</b>
         </Typography>
+
         <Typography
           variant="body2"
           sx={{ display: "flex", justifyContent: "space-between", color: colors?.secondary }}
