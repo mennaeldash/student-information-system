@@ -52,9 +52,7 @@ export async function fetchPerformanceMatrix(lang = 'en') {
   }
 }
 
-/**
- * Fetch available academic years
- */
+
 export async function fetchAcademicYears(lang = 'en') {
   try {
     const data = await fetchJson(`/api/student/academic-years?lang=${lang}`);
