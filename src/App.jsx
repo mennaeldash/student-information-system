@@ -28,6 +28,8 @@ import TAProfile from "./pages/assistant/profile.jsx";
 import TASections from "./pages/assistant/sections.jsx";
 import TASchedule from "./pages/assistant/schedule.jsx";
 import TARegistrationRequests from "./pages/assistant/registrationrequests.jsx";
+import TAEvaluation     from "./pages/assistant/evaluation.jsx";
+import Requests from "../src/components/assistant/registration_requests_components/requests";
 
 import DoctorResponsiveDrawer from "./layouts/DoctorResponsiveDrawer.jsx";
 import DoctorDashboard from "./pages/doctor/dashboard.jsx";
@@ -81,12 +83,15 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
+
       { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <TADashboard /> },
       { path: "profile", element: <TAProfile /> },
       { path: "attendance", element: <TAAttendance /> },
       { path: "StudentsDirectory", element: <TAStudentsDirectory /> },
       { path: "courses", element: <TACourses /> },
+            { path: "evaluation", element: <TAEvaluation /> },
+{ path: "requests", element: <Requests /> },
       { path: "courses/sections", element: <TASections /> },
       { path: "courses/schedule", element: <TASchedule /> },
       { path: "gradingsupport", element: <TAGradingSupport /> },
@@ -108,6 +113,8 @@ const router = createBrowserRouter([
       { path: "profile", element: <DoctorProfile /> },
       { path: "gradingsupport", element: <DoctorGradingSupport /> },
       { path: "schedule", element: <DoctorSchedule /> },
+            { path: "courses", element: <DoctorCourses /> },
+
       { path: "settings", element: <DoctorSettings /> },
     ],
   },

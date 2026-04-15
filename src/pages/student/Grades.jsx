@@ -13,7 +13,7 @@ import {
   fetchCoursesGrades,
   fetchPerformanceMatrix,
   fetchAcademicYears,
-} from '../../hooks/grades_service.js/';
+} from '../../hooks/grades_service.js';
 
 export default function Grades() {
   const { t, i18n } = useTranslation();

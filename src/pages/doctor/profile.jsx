@@ -43,7 +43,7 @@ export default function DoctorProfile() {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
-  const isDark = colors?.mode === "dark" || appTheme === "dark";
+  const isDark = colors?.mode === "dark";
 
   const pageBg = colors?.background || (isDark ? "#020617" : "#F3F4F6");
   const panelBg = colors?.box || (isDark ? "#0B1220" : "#FFFFFF");

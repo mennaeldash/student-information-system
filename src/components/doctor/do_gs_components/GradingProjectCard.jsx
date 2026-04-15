@@ -41,7 +41,7 @@ function StatusChip({ status = "submitted" }) {
         borderRadius: "16px",
         bgcolor: v.bg,
         color: v.fg,
-        "& .MuiChip-label": { px: "10px" }, 
+        "& .MuiChip-label": { px: "10px" },
       }}
     />
   );
@@ -51,7 +51,8 @@ function InfoBlock({ label, value }) {
   const { colors } = useThemeContext();
   const isDark = colors?.mode === "dark";
 
-  const labelColor = colors?.secondary || (isDark ? "rgba(148,163,184,0.9)" : "#8B8F9A");
+  const labelColor =
+    colors?.secondary || (isDark ? "rgba(148,163,184,0.9)" : "#8B8F9A");
   const valueColor = colors?.text || (isDark ? "#e2e8f0" : "#000000");
 
   return (
@@ -95,7 +96,7 @@ function MembersRow({ members = [] }) {
 
   const textColor = colors?.text || (isDark ? "#e2e8f0" : "#000");
   const avatarBorder = isDark ? "rgba(255,255,255,0.12)" : "#fff";
-  const plusBg = "#7385AE"; 
+  const plusBg = "#7385AE";
 
   const initials = (name) => {
     const parts = String(name || "").trim().split(/\s+/);
@@ -167,7 +168,8 @@ function PersonLine({ label, value }) {
   const { colors } = useThemeContext();
   const isDark = colors?.mode === "dark";
 
-  const labelColor = colors?.secondary || (isDark ? "rgba(148,163,184,0.9)" : "#8B8F9A");
+  const labelColor =
+    colors?.secondary || (isDark ? "rgba(148,163,184,0.9)" : "#8B8F9A");
   const valueColor = colors?.text || (isDark ? "#e2e8f0" : "#000000");
 
   return (
@@ -181,10 +183,7 @@ function PersonLine({ label, value }) {
           lineHeight: "20px",
         }}
       >
-        {label}{" "}
-        <span style={{ color: valueColor }}>
-          {value}
-        </span>
+        {label} <span style={{ color: valueColor }}>{value}</span>
       </Typography>
     </Box>
   );
@@ -195,23 +194,25 @@ export default function GradingProjectCard({ item, onView }) {
   const isDark = colors?.mode === "dark";
 
   const cardBg = colors?.box || (isDark ? "rgba(255,255,255,0.03)" : "#FFFFFF");
-  const border = colors?.border || (isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)");
+  const border =
+    colors?.border ||
+    (isDark ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.12)");
   const titleColor = colors?.text || (isDark ? "#e2e8f0" : "#000000");
 
   const divider = isDark ? "rgba(255,255,255,0.10)" : "rgba(15,23,42,0.10)";
 
   const btnBg = colors?.cod || "#E6E6E6";
   const btnHover = isDark ? btnBg : "#DEDEDE";
-  const btnText = isDark ? (colors?.text || "#e2e8f0") : "#000";
+  const btnText = isDark ? colors?.text || "#e2e8f0" : "#000";
 
   return (
     <Box
       sx={{
         width: "100%",
-        borderRadius: "8px", 
+        borderRadius: "8px",
         bgcolor: cardBg,
         border: `1px solid ${border}`,
-        boxShadow: isDark ? "none" : "0px 0px 4px rgba(0,0,0,0.25)", 
+        boxShadow: isDark ? "none" : "0px 0px 4px rgba(0,0,0,0.25)",
         overflow: "hidden",
       }}
     >
@@ -229,7 +230,7 @@ export default function GradingProjectCard({ item, onView }) {
         <Typography
           sx={{
             fontFamily: ff,
-            fontSize: 18, 
+            fontSize: 18,
             fontWeight: 400,
             lineHeight: "20px",
             color: titleColor,
@@ -268,6 +269,7 @@ export default function GradingProjectCard({ item, onView }) {
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <InfoBlock label="Domain" value={item?.domain} />
           </Box>
+
           <Box sx={{ width: "260px", minWidth: 0 }}>
             <InfoBlock label="Academic Year" value={item?.academicYear} />
           </Box>
@@ -279,12 +281,15 @@ export default function GradingProjectCard({ item, onView }) {
               fontFamily: ff,
               fontSize: 16,
               fontWeight: 400,
-              color: colors?.secondary || (isDark ? "rgba(148,163,184,0.9)" : "#8B8F9A"),
+              color:
+                colors?.secondary ||
+                (isDark ? "rgba(148,163,184,0.9)" : "#8B8F9A"),
               lineHeight: "20px",
             }}
           >
             Members
           </Typography>
+
           <MembersRow members={item?.members || []} />
         </Box>
 
@@ -299,7 +304,7 @@ export default function GradingProjectCard({ item, onView }) {
             disableElevation
             sx={{
               width: 165,
-              height: 45, 
+              height: 45,
               borderRadius: "8px",
               bgcolor: btnBg,
               color: btnText,

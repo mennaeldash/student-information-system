@@ -43,7 +43,7 @@ export default function TAProfile() {
   const { i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
-  const isDark = colors?.mode === "dark" || appTheme === "dark";
+  const isDark = colors?.mode === "dark";
 
   // Page + theme fallbacks
   const pageBg = colors?.background || (isDark ? "#020617" : "#F3F4F6");

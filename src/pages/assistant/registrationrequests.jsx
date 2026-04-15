@@ -196,7 +196,6 @@ export default function TARegistrationRequests() {
           <Box
             sx={{
               display: "grid",
-              // ✅ موبايل: عمود واحد / ديسكتوب: عمودين
               gridTemplateColumns: {
                 xs: "1fr",
                 md: "repeat(2, minmax(0, 635px))",

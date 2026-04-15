@@ -1,6 +1,6 @@
-// src/components/assistant/as_rr_components/RegistrationRequestCard.jsx
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../../../services/theme_context.jsx";
 
 const ff =
@@ -9,7 +9,7 @@ const ff =
 function StatusChip({ status }) {
   const { colors } = useThemeContext();
   const isDark = colors?.mode === "dark";
-
+const navigate = useNavigate();
   const map = {
     under_review: {
       label: "Under Review",
@@ -83,6 +83,7 @@ function StatusChip({ status }) {
 
 export default function RegistrationRequestCard({ item, onView }) {
   const { colors } = useThemeContext();
+  const navigate = useNavigate();
   const isDark = colors?.mode === "dark";
 
   const textMain = isDark ? "rgba(226,232,240,0.95)" : "#111827";
@@ -105,7 +106,7 @@ export default function RegistrationRequestCard({ item, onView }) {
   return (
     <Box
       sx={{
-       width: "100%",                 // ✅ يخليها تتمدد داخل العمود
+        width: "100%",
         maxWidth: { xs: "100%", md: "635px" },
         height: { xs: "auto", md: "224px" },
         borderRadius: "8px",
@@ -118,7 +119,6 @@ export default function RegistrationRequestCard({ item, onView }) {
         boxSizing: "border-box",
       }}
     >
-      {/* Header */}
       <Box
         sx={{
           width: "100%",
@@ -182,7 +182,6 @@ export default function RegistrationRequestCard({ item, onView }) {
 
       <Box sx={{ width: "100%", height: "1px", bgcolor: divider, position: "relative", zIndex: 2 }} />
 
-      {/* Middle */}
       <Box
         sx={{
           width: "100%",
@@ -206,76 +205,28 @@ export default function RegistrationRequestCard({ item, onView }) {
           }}
         >
           <Box>
-            <Typography
-              sx={{
-                fontFamily: ff,
-                fontSize: { xs: "13px", md: "15px" },
-                fontWeight: 400,
-                lineHeight: "20px",
-                color: textSub,
-              }}
-            >
+            <Typography sx={{ fontFamily: ff, fontSize: { xs: "13px", md: "15px" }, fontWeight: 400, lineHeight: "20px", color: textSub }}>
               Program
             </Typography>
-            <Typography
-              sx={{
-                fontFamily: ff,
-                fontSize: { xs: "13px", md: "15px" },
-                fontWeight: 400,
-                lineHeight: "20px",
-                color: textMain,
-              }}
-            >
+            <Typography sx={{ fontFamily: ff, fontSize: { xs: "13px", md: "15px" }, fontWeight: 400, lineHeight: "20px", color: textMain }}>
               {item?.program}
             </Typography>
           </Box>
 
           <Box>
-            <Typography
-              sx={{
-                fontFamily: ff,
-                fontSize: { xs: "13px", md: "15px" },
-                fontWeight: 400,
-                lineHeight: "20px",
-                color: textSub,
-              }}
-            >
+            <Typography sx={{ fontFamily: ff, fontSize: { xs: "13px", md: "15px" }, fontWeight: 400, lineHeight: "20px", color: textSub }}>
               Level
             </Typography>
-            <Typography
-              sx={{
-                fontFamily: ff,
-                fontSize: { xs: "13px", md: "15px" },
-                fontWeight: 400,
-                lineHeight: "20px",
-                color: textMain,
-              }}
-            >
+            <Typography sx={{ fontFamily: ff, fontSize: { xs: "13px", md: "15px" }, fontWeight: 400, lineHeight: "20px", color: textMain }}>
               {item?.level}
             </Typography>
           </Box>
 
           <Box>
-            <Typography
-              sx={{
-                fontFamily: ff,
-                fontSize: { xs: "13px", md: "15px" },
-                fontWeight: 400,
-                lineHeight: "20px",
-                color: textSub,
-              }}
-            >
+            <Typography sx={{ fontFamily: ff, fontSize: { xs: "13px", md: "15px" }, fontWeight: 400, lineHeight: "20px", color: textSub }}>
               Request Credit
             </Typography>
-            <Typography
-              sx={{
-                fontFamily: ff,
-                fontSize: { xs: "13px", md: "15px" },
-                fontWeight: 400,
-                lineHeight: "20px",
-                color: textMain,
-              }}
-            >
+            <Typography sx={{ fontFamily: ff, fontSize: { xs: "13px", md: "15px" }, fontWeight: 400, lineHeight: "20px", color: textMain }}>
               {item?.requestCredit}
             </Typography>
           </Box>
@@ -294,7 +245,6 @@ export default function RegistrationRequestCard({ item, onView }) {
         }}
       />
 
-      {/* Footer */}
       <Box
         sx={{
           width: "100%",
@@ -311,7 +261,7 @@ export default function RegistrationRequestCard({ item, onView }) {
         }}
       >
         <Button
-          onClick={() => onView?.(item)}
+          onClick={() => navigate("/ta/requests")}
           sx={{
             width: { xs: "100%", sm: "140px" },
             height: { xs: "42px", md: "40px" },

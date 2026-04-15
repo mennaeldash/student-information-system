@@ -78,7 +78,7 @@ setTransferData({
       } catch (err) {
         console.error("Error fetching profile:", err);
 
-        if (err.response.data.message) {
+        if (err?.response?.data?.message) {
           setError(err.response.data.message);
         } else {
           setError("Failed to load profile");

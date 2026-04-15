@@ -1,4 +1,15 @@
 
+import api from "../services/api";
+
+/**
+ * Helper: fetch JSON from the API using the shared axios instance (includes auth headers).
+ * Falls back gracefully so the page can display default data.
+ */
+async function fetchJson(path) {
+  const { data } = await api.get(path);
+  return data;
+}
+
 export async function fetchStudentInfo(lang = 'en') {
   try {
     const data = await fetchJson(`/api/student/info?lang=${lang}`);

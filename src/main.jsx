@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { SnackbarProvider } from "notistack";
 
 import App from './App.jsx';
 
@@ -13,11 +14,15 @@ import rtlPlugin from 'stylis-plugin-rtl';
 import { prefixer } from 'stylis';
 
 import { ThemeProvider } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { useTranslation } from 'react-i18next';
 import i18n from './i18n.js';
 
 import { ThemeProviderContext, useThemeContext } from './services/theme_context.jsx';
+
+// ✅ QueryClient moved to module scope — singleton, not recreated on every render
+const queryClient = new QueryClient();
 
 // مكون ملف عادي لتغليف التطبيق بالثيم والمراجعة حسب اللغة
 function MainWrapper() {
@@ -29,16 +34,14 @@ function MainWrapper() {
     stylisPlugins: i18n.language === 'ar' ? [prefixer, rtlPlugin] : [],
   });
 
-  // استخدام الثيم Context
-  const { theme } = useThemeContext();
-
   return (
     <CacheProvider value={cache}>
-      <ThemeProvider theme={theme}>
-        <App />
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+          <App />
+        </SnackbarProvider>
+      </QueryClientProvider>
     </CacheProvider>
-    
   );
 }
 

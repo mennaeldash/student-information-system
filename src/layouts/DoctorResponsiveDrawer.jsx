@@ -23,6 +23,7 @@ import {
   AccountCircle as AccountCircleIcon,
   CalendarToday as CalendarTodayIcon,
   Settings as SettingsIcon,
+  MenuBook as MenuBookIcon,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 
@@ -70,9 +71,10 @@ function DoctorResponsiveDrawer(props) {
   const menuItems = [
     { id: 1, key: "dashboard", icon: <HomeIcon />, to: "/doctor/dashboard" },
     { id: 2, key: "profile", icon: <AccountCircleIcon />, to: "/doctor/profile" },
-    { id: 3, key: "Grading Support", icon: <ChartColumn />, to: "/doctor/gradingsupport" },
-    { id: 4, key: "schedule", icon: <CalendarTodayIcon />, to: "/doctor/schedule" },
-    { id: 5, key: "settings", icon: <SettingsIcon />, to: "/doctor/settings" },
+    { id: 3, key: "Courses", icon: <MenuBookIcon />, to: "/doctor/courses" },
+    { id: 4, key: "Grading Support", icon: <ChartColumn />, to: "/doctor/gradingsupport" },
+    { id: 5, key: "schedule", icon: <CalendarTodayIcon />, to: "/doctor/schedule" },
+    { id: 6, key: "settings", icon: <SettingsIcon />, to: "/doctor/settings" },
   ];
 
   const activeMenuItem = menuItems.find(

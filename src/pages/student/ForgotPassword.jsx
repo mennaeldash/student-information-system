@@ -8,23 +8,28 @@ import {
   Button,
   InputAdornment,
   IconButton,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import PasswordOutlinedIcon from "@mui/icons-material/PasswordOutlined";
+import NumbersOutlinedIcon from "@mui/icons-material/NumbersOutlined";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import { useNavigate } from "react-router-dom";
 
 import { useThemeContext } from "../../services/theme_context.jsx";
 import { fetch_theme_colors } from "../../services/theme_service";
 
-const API_BASE = "https://eelu-test.runasp.net";
+const API_BASE = "https://eelu-test.runasp.net/api/authentication_";
+const SERVER_BASE = "https://eelu-test.runasp.net";
 
 function resolveLogoUrl(raw) {
   if (!raw) return "";
   const v = String(raw).trim();
 
   if (/^(data:|blob:|https?:\/\/)/i.test(v)) return v;
-  if (v.startsWith("/")) return `${API_BASE}${v}`;
-  return `${API_BASE}/${v}`;
+  if (v.startsWith("/")) return `${SERVER_BASE}${v}`;
+  return `${SERVER_BASE}/${v}`;
 }
 
 export default function ForgotPassword() {
@@ -42,7 +47,14 @@ export default function ForgotPassword() {
   const [loogo_url, setLogo_url] = useState("");
   const [slogan, setSlogan] = useState("");
 
+  // steps: 1 email -> 2 verify code -> 3 reset password
+  const [step, setStep] = useState(1);
+
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
@@ -99,20 +111,172 @@ export default function ForgotPassword() {
     return isDark ? "rgba(255,255,255,0.08)" : "rgba(15,23,42,0.10)";
   }, [isDark]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
+  const clearMessages = () => {
     setMsg("");
     setError("");
+  };
+
+  const handleSendResetCode = async (e) => {
+    e.preventDefault();
+    clearMessages();
+
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setSubmitting(true);
 
     try {
-      await new Promise((r) => setTimeout(r, 600));
-      setMsg("If this email exists, we sent you a reset link.");
-    } catch (e2) {
-      setError("Something went wrong. Please try again.");
+      const response = await fetch(`${API_BASE}/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: trimmedEmail,
+        }),
+      });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message || data?.title || "Failed to send verification code."
+        );
+      }
+
+      setMsg(data?.message || "If email exists, code sent.");
+      setStep(2);
+    } catch (err) {
+      console.error("Forgot password error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleVerifyCode = async (e) => {
+    e.preventDefault();
+    clearMessages();
+
+    const trimmedCode = code.trim();
+
+    if (!trimmedCode) {
+      setError("Please enter the code.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await fetch(`${API_BASE}/verify-reset-code`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          code: trimmedCode,
+        }),
+      });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.message || data?.title || "Invalid code.");
+      }
+
+      setMsg("Code verified successfully.");
+      setStep(3);
+    } catch (err) {
+      console.error("Verify code error:", err);
+      setError(err.message || "Invalid code.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    clearMessages();
+
+    if (!newPassword || !confirmNewPassword) {
+      setError("Please enter the new password and confirm it.");
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await fetch(`${API_BASE}/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: email.trim(),
+          code: code.trim(),
+          newPassword,
+          confirmNewPassword,
+        }),
+      });
+
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message || data?.title || "Failed to reset password."
+        );
+      }
+
+      setMsg(data?.message || "Password changed successfully.");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1200);
+    } catch (err) {
+      console.error("Reset password error:", err);
+      setError(err.message || "Failed to reset password.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const renderStepTitle = () => {
+    if (step === 1) return "Forget Password";
+    if (step === 2) return "Verify Code";
+    return "Reset Password";
   };
 
   if (theme_loading) {
@@ -131,8 +295,8 @@ export default function ForgotPassword() {
     <Box
       sx={{
         minHeight: "100vh",
-        display: "flex",              // ✅ جديد
-        flexDirection: "column",       // ✅ جديد
+        display: "flex",
+        flexDirection: "column",
         bgcolor: colors?.background || "#f8fafc",
         color: colors?.text || "#0f172a",
         position: "relative",
@@ -175,7 +339,7 @@ export default function ForgotPassword() {
         </Box>
       </Box>
 
-      {/* Body wrapper (ياخد باقي الصفحة) */}
+      {/* Body wrapper */}
       <Box
         sx={{
           px: { xs: 2, md: 6 },
@@ -185,7 +349,7 @@ export default function ForgotPassword() {
           justifyContent: "center",
           position: "relative",
           zIndex: 1,
-          flex: 1,                    // ✅ جديد: ياخد باقي الارتفاع
+          flex: 1,
         }}
       >
         {/* Blue container */}
@@ -195,26 +359,18 @@ export default function ForgotPassword() {
             maxWidth: 1160,
             borderRadius: { xs: 5, md: 7 },
             bgcolor: "#0B3A7A",
-
-            // ✅ جديد: استرتش مع الشاشة
             flex: 1,
             minHeight: { xs: "auto", md: "clamp(560px, 70vh, 900px)" },
-
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
-
-            // ✅ أهم تعديل للاسترتش
             alignItems: "stretch",
             justifyContent: "center",
-
             px: { xs: 2.5, md: 8 },
             py: { xs: 5, md: 6 },
             gap: { xs: 4, md: 7 },
-
             boxShadow: isDark
               ? "0 18px 45px rgba(0,0,0,0.35)"
               : "0 18px 45px rgba(2,6,23,0.12)",
-
             overflow: "hidden",
             boxSizing: "border-box",
           }}
@@ -240,7 +396,7 @@ export default function ForgotPassword() {
                 alignItems: "center",
                 justifyContent: "center",
                 p: 1,
-                bgcolor: circleFill,   // ✅ رجّعنا الخلفية الشفافة
+                bgcolor: circleFill,
                 width: { xs: 180, md: 240 },
                 height: { xs: 180, md: 240 },
               }}
@@ -297,74 +453,286 @@ export default function ForgotPassword() {
               }}
             >
               <Typography sx={{ fontSize: 22, fontWeight: 700, mb: 1.8 }}>
-                Forget Password
+                {renderStepTitle()}
               </Typography>
 
-              <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2 }}>
-                <Box>
-                  <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75 }}>
-                    Student Mail
-                  </Typography>
+              {step === 1 && (
+                <Box
+                  component="form"
+                  onSubmit={handleSendResetCode}
+                  sx={{ display: "grid", gap: 2 }}
+                >
+                  <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75 }}>
+                      Student Mail
+                    </Typography>
 
-                  <TextField
-                    fullWidth
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your mail address"
-                    type="email"
-                    required
-                    size="small"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <EmailOutlinedIcon sx={{ color: colors?.secondary || "#64748b" }} />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        bgcolor: colors?.background || "#f8fafc",
+                    <TextField
+                      fullWidth
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your mail address"
+                      type="email"
+                      required
+                      size="small"
+                      disabled={submitting}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <EmailOutlinedIcon
+                              sx={{ color: colors?.secondary || "#64748b" }}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          bgcolor: colors?.background || "#f8fafc",
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  {!!msg && <Alert severity="success">{msg}</Alert>}
+                  {!!error && <Alert severity="error">{error}</Alert>}
+
+                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={submitting}
+                      sx={{
+                        textTransform: "none",
                         borderRadius: 2,
-                      },
-                    }}
-                  />
-                </Box>
+                        px: 3.2,
+                        minWidth: 120,
+                        boxShadow: "none",
+                        bgcolor: colors?.primary || "#1d4ed8",
+                        color: "white",
+                        "&:hover": { bgcolor: colors?.primary || "#1d4ed8" },
+                      }}
+                    >
+                      {submitting ? (
+                        <CircularProgress size={22} sx={{ color: "#fff" }} />
+                      ) : (
+                        "Submit"
+                      )}
+                    </Button>
+                  </Box>
 
-                {!!msg && <Typography sx={{ fontSize: 12, color: "#16a34a" }}>{msg}</Typography>}
-                {!!error && <Typography sx={{ fontSize: 12, color: "#dc2626" }}>{error}</Typography>}
-
-                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={submitting}
+                    type="button"
+                    onClick={() => navigate("/login")}
                     sx={{
                       textTransform: "none",
-                      borderRadius: 2,
-                      px: 3.2,
-                      boxShadow: "none",
-                      bgcolor: colors?.primary || "#1d4ed8",
-                      color: "white",
-                      "&:hover": { bgcolor: colors?.primary || "#1d4ed8" },
+                      color: colors?.secondary || "#64748b",
+                      justifyContent: "flex-start",
+                      px: 0,
                     }}
                   >
-                    {submitting ? "Submitting..." : "Submit"}
+                    Back to login
                   </Button>
                 </Box>
+              )}
 
-                <Button
-                  type="button"
-                  onClick={() => navigate("/login")}
-                  sx={{
-                    textTransform: "none",
-                    color: colors?.secondary || "#64748b",
-                    justifyContent: "flex-start",
-                    px: 0,
-                  }}
+              {step === 2 && (
+                <Box
+                  component="form"
+                  onSubmit={handleVerifyCode}
+                  sx={{ display: "grid", gap: 2 }}
                 >
-                  Back to login
-                </Button>
-              </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75 }}>
+                      Enter The Number
+                    </Typography>
+
+                    <TextField
+                      fullWidth
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      placeholder="Enter the code sent to your email"
+                      type="text"
+                      required
+                      size="small"
+                      disabled={submitting}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <NumbersOutlinedIcon
+                              sx={{ color: colors?.secondary || "#64748b" }}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          bgcolor: colors?.background || "#f8fafc",
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  {!!msg && <Alert severity="success">{msg}</Alert>}
+                  {!!error && <Alert severity="error">{error}</Alert>}
+
+                  <Box sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        clearMessages();
+                        setStep(1);
+                      }}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        px: 2.4,
+                        color: colors?.secondary || "#64748b",
+                      }}
+                    >
+                      Back
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={submitting}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        px: 3.2,
+                        minWidth: 120,
+                        boxShadow: "none",
+                        bgcolor: colors?.primary || "#1d4ed8",
+                        color: "white",
+                        "&:hover": { bgcolor: colors?.primary || "#1d4ed8" },
+                      }}
+                    >
+                      {submitting ? (
+                        <CircularProgress size={22} sx={{ color: "#fff" }} />
+                      ) : (
+                        "Verify"
+                      )}
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+
+              {step === 3 && (
+                <Box
+                  component="form"
+                  onSubmit={handleResetPassword}
+                  sx={{ display: "grid", gap: 2 }}
+                >
+                  <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75 }}>
+                      New Password
+                    </Typography>
+
+                    <TextField
+                      fullWidth
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new password"
+                      type="password"
+                      required
+                      size="small"
+                      disabled={submitting}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PasswordOutlinedIcon
+                              sx={{ color: colors?.secondary || "#64748b" }}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          bgcolor: colors?.background || "#f8fafc",
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.75 }}>
+                      Confirm New Password
+                    </Typography>
+
+                    <TextField
+                      fullWidth
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      placeholder="Confirm new password"
+                      type="password"
+                      required
+                      size="small"
+                      disabled={submitting}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PasswordOutlinedIcon
+                              sx={{ color: colors?.secondary || "#64748b" }}
+                            />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          bgcolor: colors?.background || "#f8fafc",
+                          borderRadius: 2,
+                        },
+                      }}
+                    />
+                  </Box>
+
+                  {!!msg && <Alert severity="success">{msg}</Alert>}
+                  {!!error && <Alert severity="error">{error}</Alert>}
+
+                  <Box sx={{ display: "flex", justifyContent: "space-between", gap: 1 }}>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        clearMessages();
+                        setStep(2);
+                      }}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        px: 2.4,
+                        color: colors?.secondary || "#64748b",
+                      }}
+                    >
+                      Back
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={submitting}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        px: 3.2,
+                        minWidth: 120,
+                        boxShadow: "none",
+                        bgcolor: colors?.primary || "#1d4ed8",
+                        color: "white",
+                        "&:hover": { bgcolor: colors?.primary || "#1d4ed8" },
+                      }}
+                    >
+                      {submitting ? (
+                        <CircularProgress size={22} sx={{ color: "#fff" }} />
+                      ) : (
+                        "Save"
+                      )}
+                    </Button>
+                  </Box>
+                </Box>
+              )}
             </Paper>
           </Box>
         </Box>
