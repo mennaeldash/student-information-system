@@ -23,6 +23,27 @@ The system focuses on providing an organized experience for students and adminis
 - Excel file support
 - Responsive navigation and layouts
 
+## Live Demo
+
+🔗 [Open Student Information System](https://proj-eelums.vercel.app/)
+
+## Demo Credentials
+
+Use the following test accounts to explore different system roles.
+
+### Teaching Assistant
+**Username:** `TA001`  
+**Password:** `P@ssw0rd1`
+
+### Doctor
+**Username:** `DO001`  
+**Password:** `P@ssw0rd2`
+
+### Student
+**Username:** `2200923`  
+**Password:** `DefaultPassword123!`
+
+> These credentials are provided for demonstration purposes only.
 ## Technologies Used
 
 - React.js
